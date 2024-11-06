@@ -1,4 +1,4 @@
-from machine import Pin, Timer, PWM
+from machine import Pin, Timer, PWM, ADC
 from time import sleep
 import uasyncio
 import math
@@ -6,12 +6,12 @@ import math
 class StepperMotor:
     
     # define the step seqeunce for a full step
-    # full_step_sequence = [
-    # [1, 1, 0, 0],
-    # [0, 1, 1, 0],
-    # [0, 0, 1, 1],
-    # [1, 0, 0, 1],
-    # ]
+    full_step_sequence = [
+    [1, 1, 0, 0],
+    [0, 1, 1, 0],
+    [0, 0, 1, 1],
+    [1, 0, 0, 1],
+    ]
     
     # defines the step sequence for a half step
     half_step_sequence =[
@@ -24,50 +24,49 @@ class StepperMotor:
     [0, 0, 0, 1],
     [1, 0, 0, 1],
     ]
-
     # defines the step sequence of 32 steps to micro step
-    # micro_step_sequence=[
-    # [1, 0, 0, 0],
-    # [1, 0.2, 0, 0],
-    # [0.91, 0.4, 0, 0],
-    # [0.83, 0.55, 0, 0],
-    # [0.71, 0.71, 0, 0],
-    # [0.55, 0.83, 0, 0],
-    # [0.4, 0.91, 0, 0],
-    # [0.2, 1, 0, 0],
-    # 
-    # [0, 1, 0, 0],
-    # [0, 1, 0.2, 0],
-    # [0, 0.91, 0.4, 0],
-    # [0, 0.83, 0.55, 0],
-    # [0, 0.71, 0.71, 0],
-    # [0, 0.55, 0.83, 0],
-    # [0, 0.4, 0.91, 0],
-    # [0, 0.2, 1, 0],
-    # 
-    # [0, 0, 1, 0],
-    # [0, 0, 1, 0.2],
-    # [0, 0, 0.91, 0.4],
-    # [0, 0, 0.83, 0.55],
-    # [0, 0, 0.71, 0.71],
-    # [0, 0, 0.55, 0.83],
-    # [0, 0, 0.4, 0.91],
-    # [0, 0, 0.2, 1],
-    #     
-    # [0, 0, 0, 1],
-    # [0.2, 0, 0, 1],
-    # [0.4, 0, 0, 0.91],
-    # [0.55, 0, 0, 0.83],
-    # [0.71, 0, 0, 0.71],
-    # [0.83, 0, 0, 0.55],
-    # [0.91, 0, 0, 0.4],
-    # [1, 0, 0, 0.2],    
-    # ]
-     
+    micro_step_sequence=[
+    [1, 0, 0, 0],
+    [1, 0.2, 0, 0],
+    [0.91, 0.4, 0, 0],
+    [0.83, 0.55, 0, 0],
+    [0.71, 0.71, 0, 0],
+    [0.55, 0.83, 0, 0],
+    [0.4, 0.91, 0, 0],
+    [0.2, 1, 0, 0],
+    
+    [0, 1, 0, 0],
+    [0, 1, 0.2, 0],
+    [0, 0.91, 0.4, 0],
+    [0, 0.83, 0.55, 0],
+    [0, 0.71, 0.71, 0],
+    [0, 0.55, 0.83, 0],
+    [0, 0.4, 0.91, 0],
+    [0, 0.2, 1, 0],
+    
+    [0, 0, 1, 0],
+    [0, 0, 1, 0.2],
+    [0, 0, 0.91, 0.4],
+    [0, 0, 0.83, 0.55],
+    [0, 0, 0.71, 0.71],
+    [0, 0, 0.55, 0.83],
+    [0, 0, 0.4, 0.91],
+    [0, 0, 0.2, 1],
+        
+    [0, 0, 0, 1],
+    [0.2, 0, 0, 1],
+    [0.4, 0, 0, 0.91],
+    [0.55, 0, 0, 0.83],
+    [0.71, 0, 0, 0.71],
+    [0.83, 0, 0, 0.55],
+    [0.91, 0, 0, 0.4],
+    [1, 0, 0, 0.2],    
+    ]
+    
     # makes ids for the different steps to be used
-    # full_step = 0
+    full_step = 0
     half_step = 1
-    # micro_step = 2
+    micro_step = 2
     
     # Makes the initializing function
     def __init__(self, pins, pwm_pct = 0.3, frequency=18_000, mode=1):
@@ -133,12 +132,12 @@ class StepperMotor:
         self.step_count += direction
         
         # given the mode the Stepper motor is set sets step to the correct step in the sequence
-        # if self.mode == StepperMotor.full_step:
-        #    step = StepperMotor.full_step_sequence[self.step_count%len(StepperMotor.full_step_sequence)]
-        if self.mode == StepperMotor.half_step:
+        if self.mode == StepperMotor.full_step:
+            step = StepperMotor.full_step_sequence[self.step_count%len(StepperMotor.full_step_sequence)]
+        elif self.mode == StepperMotor.half_step:
             step = StepperMotor.half_step_sequence[self.step_count%len(StepperMotor.half_step_sequence)]
-        # elif self.mode == StepperMotor.micro_step:
-        #    step = StepperMotor.micro_step_sequence[self.step_count%len(StepperMotor.micro_step_sequence)]
+        elif self.mode == StepperMotor.micro_step:
+            step = StepperMotor.micro_step_sequence[self.step_count%len(StepperMotor.micro_step_sequence)]
         
         # changes the PWM for all the pins for the stepper motor depending on the step
         for pin in range(len(self.pins)):
@@ -209,7 +208,7 @@ class MultiStepper():
         
         # sets the delays
         for i in range(len(self.stepperMotors)):
-            self.stepperMotors[i].Set_Delay(delays[i])
+            self.stepperMotors[i].set_Delay(delays[i])
     
     # Function to set speed for motors as steps per second
     def set_Speed(self, speeds):
@@ -221,7 +220,7 @@ class MultiStepper():
         
         # sets the delay to 1/speed for the motors 
         for i in range(len(self.stepperMotors)):
-            self.stepperMotors[i].Set_Delay(1/speeds[i])
+            self.stepperMotors[i].set_Delay(1/speeds[i])
 
     # an async function to move all stepper motors 
     async def move(self, steps):
@@ -259,10 +258,6 @@ class MultiStepper():
 # Class for the differential driver
 class DifferentialDriver():
     def __init__(self, multiStepper):
-        #Checks if 2 motors are added
-        if len(multiStepper) != 2:
-            print("must only add 2 motors")
-            return 0    
         self.multiStepper = multiStepper
     
     # steps to calculate steps for a given distance in 
@@ -274,12 +269,12 @@ class DifferentialDriver():
         
         # checks which mode the stepperMode is set to and calculates how many steps it needs
         stepsToGo = 0
-        # if mode == StepperMotor.full_step:
-        #    stepsToGo = 200*distanceCm/circumference
-        if mode == StepperMotor.half_step:
+        if mode == StepperMotor.full_step:
+           stepsToGo = 200*distanceCm/circumference
+        elif mode == StepperMotor.half_step:
             stepsToGo = 400*distanceCm/circumference
-        # elif mode == StepperMotor.micro_step:
-        #    stepsToGo = 200*len(StepperMotor.micro_step_sequence)*distanceCm/(circumference*4)
+        elif mode == StepperMotor.micro_step:
+           stepsToGo = 200*len(StepperMotor.micro_step_sequence)*distanceCm/(circumference*4)
             
         # rounds the steps to go
         return round(stepsToGo)
@@ -305,21 +300,25 @@ class DifferentialDriver():
         
         # checks which mode the stepperMode is set to and calculates how many steps it needs
         stepsToGo = 0
-        # if mode == StepperMotor.full_step:
-        #    stepsToGo = fullStepsForFullRotation*degrees/360
-        if mode == StepperMotor.half_step:
+        if mode == StepperMotor.full_step:
+           stepsToGo = fullStepsForFullRotation*degrees/360
+        elif mode == StepperMotor.half_step:
             stepsToGo = 2*fullStepsForFullRotation*degrees/360
-        # elif mode == StepperMotor.micro_step:
-        #    stepsToGo = fullStepsForFullRotation*len(StepperMotor.micro_step_sequence)/4
+        elif mode == StepperMotor.micro_step:
+           stepsToGo = fullStepsForFullRotation*len(StepperMotor.micro_step_sequence)/4
         
         # rounds the steps to go
         return round(stepsToGo)
     
     # function for rotating on place in both ways depending on if steps is negative og positiv
     async def inPlaceRotation(self, degree):
+        print("inPlaceRotation")
         # Calculates the steps each motor has to take to turn given the degrees
-        steps0 = self.distanceToSteps(degree, self.multiStepper.getModes()[0])
-        steps1 = self.distanceToSteps(degree, self.multiStepper.getModes()[1])
+        steps0 = self.inPlaceRotationStepsToDegree(degree, self.multiStepper.getModes()[0])
+        steps1 = self.inPlaceRotationStepsToDegree(degree, self.multiStepper.getModes()[1])
+        print(steps0, steps1)
+
+
         # moves the diffrent motors 2 different ways
         await self.multiStepper.move([steps0, -steps1])
     
@@ -331,59 +330,77 @@ class DifferentialDriver():
         else:
             await self.multiStepper.move([0, steps])
         
-    
-# async def carRoutine(car):
-#    #steps for driving 1 meter and making a 90 angle turn
-#    turnSteps = car.InPlaceRotation(90)
-#    steps = car.GoForwardGivenDistance(100)
-#    
-#    #a routine for going in a square
-#    await car.GoForward(steps)
-#    await car.ClockTurn(turnSteps)
-#
-#    await car.GoForward(steps)
-#    await car.ClockTurn(turnSteps)
-#
-#    await car.GoForward(steps)
-#    await car.ClockTurn(turnSteps)
-#
-#    await car.GoForward(steps)
-#    await car.ClockTurn(turnSteps)
+
+async def monitorStart():
+    global shouldMonitor
+    with open("data_log.csv", "w") as file:
+        file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
+        current_time = 0
+
+        while shouldMonitor:
+            # Read raw ADC value (12-bit range: 0 to 4095)
+            adc_value = adc_pin.read_u16()  # Returns 16-bit value (0-65535)
+            
+            # Scale the 16-bit reading to voltage
+            voltage = (adc_value / 65535) * REFERENCE_VOLTAGE
+
+            # Open the file for writing (or appending) data
+                # Write the CSV header
+
+            # Main loop
+            resistance = round(REFERENCE_VOLTAGE * R2 / voltage - R2)
+
+            # Print the data to the console
+            #print("Time: {:.2f} s, Voltage: {:.2f} V, Resistance: {} Ohm".format(current_time, voltage, resistance))
+            
+            file.write("{:.2f}, {:.2f}, {}\n".format(current_time, voltage, resistance))
+
+            # Delay between readings
+            await uasyncio.sleep(0.1)
+            current_time += 0.1
+
+
 
 # function to start the program
-def start():
+async def start():
     print("Starts")
-    # initializes pins to also see the LEDS when the channels open
-    pins = [16,17,18,19,20,21,22,23]
-    [PWM(Pin(pin))for pin in pins]
+    global shouldMonitor
+    shouldMonitor = True
+    uasyncio.create_task(monitorStart())
+    await car.inPlaceRotation(180)
+    shouldMonitor = False
+
+if __name__ == '__main__':
+
+    # Set up the ADC pin (choose one of GP26, GP27, or GP28 for ADC on Pico W)
+    adc_pin = ADC(Pin(26))  # GP26 is labeled as ADC0 on Pico
+
+    # Reference voltage for the Pico W is typically 3.3V
+    REFERENCE_VOLTAGE = 3.3
+    R2 = 2200  # Known resistor value in the voltage divider circuit
+
+
+
+    print("Starts")
 
     # Makes objects for the motor
-    motorRight = StepperMotor([0,1,2,3], 0.8, 18000, StepperMotor.half_step)
-    motorLeft = StepperMotor([4,5,6,7], 0.8, 18000, StepperMotor.half_step)
+    motorRight = StepperMotor([0,1,2,3], 0.15, 18000, StepperMotor.half_step)
+    motorLeft = StepperMotor([4,5,6,7], 0.15, 18000, StepperMotor.half_step)
 
     # makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
-    
+
     # set their delays
-    multiStepper.set_Delays([0.005,0.005])
+    multiStepper.set_Delays([0.01,0.01])
 
     # makes a differentialDriver object
-    # car = DifferentialDriver(multiStepper)
+    car = DifferentialDriver(multiStepper)
+    sleep(1)
+    try:
+        uasyncio.run(start())
+    except:
+        print("Stoper programmet")
+        multiStepper.stop()
 
 
-    # puts in a try statement to stop program with ctrl+c in terminal and turn off PWM
-    # try:
-    #    uasyncio.run(carRoutine(car))
-        
-    # stops the PWM signal by setting duty cycle to 0
-    # except:
-    #    print("Stoper programmet")
-    #    multiStepper.Stop()
-
-# Makes it so i can start the program wiht the button onboard the PCB     
-button = Pin('GP27', Pin.IN, Pin.PULL_DOWN)
-while True:
-    if button.value() == 0:
-        start()
-        break
-       
+    
