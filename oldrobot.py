@@ -5,7 +5,7 @@ import math
 
 class StepperMotor:
     
-    # define the step seqeunce for a full step
+    # Define the step seqeunce for a full step
     full_step_sequence = [
     [1, 1, 0, 0],
     [0, 1, 1, 0],
@@ -13,7 +13,7 @@ class StepperMotor:
     [1, 0, 0, 1],
     ]
     
-    # defines the step sequence for a half step
+    # Defines the step sequence for a half step
     half_step_sequence =[
     [1, 0, 0, 0],
     [1, 1, 0, 0],
@@ -24,7 +24,7 @@ class StepperMotor:
     [0, 0, 0, 1],
     [1, 0, 0, 1],
     ]
-    # defines the step sequence of 32 steps to micro step
+    # Defines the step sequence of 32 steps to micro step
     micro_step_sequence=[
     [1, 0, 0, 0],
     [1, 0.2, 0, 0],
@@ -63,14 +63,14 @@ class StepperMotor:
     [1, 0, 0, 0.2],    
     ]
     
-    # makes ids for the different steps to be used
+    # Makes ids for the different steps to be used
     full_step = 0
     half_step = 1
     micro_step = 2
     
     # Makes the initializing function
     def __init__(self, pins, pwm_pct = 0.3, frequency=18_000, mode=1):
-        # makes all the pins used for the stepper motor PWM and saves them to the object
+        # Makes all the pins used for the stepper motor PWM and saves them to the object
         
         self.pins = [PWM(Pin(pin))for pin in pins]
         # self.pins = [Pin(pin, Pin.OUT)for pin in pins]
@@ -218,11 +218,11 @@ class MultiStepper():
             print("must input a list of same size as stepperMotors")
             return 0
         
-        # sets the delay to 1/speed for the motors 
+        # Sets the delay to 1/speed for the motors 
         for i in range(len(self.stepperMotors)):
             self.stepperMotors[i].set_Delay(1/speeds[i])
 
-    # an async function to move all stepper motors 
+    # An async function to move all stepper motors 
     async def move(self, steps):
         # Checks the lenght of the given steps to be the same as the number of motors
         if len(steps) != len(self.stepperMotors):
@@ -232,16 +232,16 @@ class MultiStepper():
         # Create a list of tasks for both motors
         tasks = []
         
-        #loops through all motors
+        # Loops through all motors
         for i in range(len(self.stepperMotors)):
-            #gets how many steps to take
+            # Gets how many steps to take
             step_offset = steps[i]
             # Add each motor movement to the task list
             tasks.append(self.stepperMotors[i].move_Stepper(step_offset))
         
         # Wait for both motors to finish moving by gathering tasks
         # Even though it says it has an error it does not when the file is moved to the pico where it also works
-        #not sure why it says it has an error though
+        # Not sure why it says it has an error though
         await uasyncio.gather(*tasks) # type: ignore
 
 
@@ -319,7 +319,7 @@ class DifferentialDriver():
         print(steps0, steps1)
 
 
-        # moves the diffrent motors 2 different ways
+        # Moves the different motors 2 different ways
         await self.multiStepper.move([steps0, -steps1])
     
     # function to make a turn
@@ -333,30 +333,26 @@ class DifferentialDriver():
 
 async def monitorStart():
     global shouldMonitor
-    with open("data_log.csv", "w") as file:
+    with open("data_log.csv", "w") as file: # w is for write, which overwrites the file if it already exists
         file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
         current_time = 0
 
         while shouldMonitor:
             # Read raw ADC value (12-bit range: 0 to 4095)
-            adc_value = adc_pin.read_u16()  # Returns 16-bit value (0-65535)
+            adc_value = adc_pin.read_u16()  # This returns 16-bit value (0-65535)
             
             # Scale the 16-bit reading to voltage
             voltage = (adc_value / 65535) * REFERENCE_VOLTAGE
 
-            # Open the file for writing (or appending) data
-                # Write the CSV header
-
-            # Main loop
+            # Calculate the resistance of the LDR with the formula from the voltage divider circuit
             resistance = round(REFERENCE_VOLTAGE * R2 / voltage - R2)
-
-            # Print the data to the console
-            #print("Time: {:.2f} s, Voltage: {:.2f} V, Resistance: {} Ohm".format(current_time, voltage, resistance))
             
+            # Print the data to the file, where 2f means there are two decimal points
             file.write("{:.2f}, {:.2f}, {}\n".format(current_time, voltage, resistance))
 
-            # Delay between readings
+            # Delay between readings, which enables the robot to drive in the mean time.
             await uasyncio.sleep(0.1)
+            # This is for plotting the time in the csv file.
             current_time += 0.1
 
 
@@ -364,20 +360,20 @@ async def monitorStart():
 # function to start the program
 async def start():
     print("Starts")
-    global shouldMonitor
+    global shouldMonitor # Because then it can be used in the monitorStart function
     shouldMonitor = True
     uasyncio.create_task(monitorStart())
     await car.inPlaceRotation(180)
-    shouldMonitor = False
+    shouldMonitor = False # Then the program stops monitoring.
 
 if __name__ == '__main__':
 
     # Set up the ADC pin (choose one of GP26, GP27, or GP28 for ADC on Pico W)
-    adc_pin = ADC(Pin(26))  # GP26 is labeled as ADC0 on Pico
+    adc_pin = ADC(Pin(26))  # GP26 is labeled as ADC0 on Pico found in the Kicad drawing
 
     # Reference voltage for the Pico W is typically 3.3V
     REFERENCE_VOLTAGE = 3.3
-    R2 = 2200  # Known resistor value in the voltage divider circuit
+    R2 = 2200  # Known resistor value in the voltage divider circuit. We chose this resistor to get a linear graph for the LDR, so that we could get as big of a span as possible.
 
 
 
@@ -399,7 +395,7 @@ if __name__ == '__main__':
     try:
         uasyncio.run(start())
     except:
-        print("Stoper programmet")
+        print("Stopper programmet")
         multiStepper.stop()
 
 

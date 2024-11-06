@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import csv
 
-# Lists to store the data
+# Lists to store the data in lists
 time_data = []
 voltage_data = []
 resistance_data = []
 
-# Read data from CSV file
+# Read data from CSV file on the Pico
 with open("Dataplotting/data_log.csv", "r") as file:
     reader = csv.reader(file)
     next(reader)  # Skip the header row
