@@ -333,7 +333,7 @@ class DifferentialDriver():
 
 async def monitorStart():
     global shouldMonitor
-    with open("data_log.csv", "w") as file: # w is for write, which overwrites the file if it already exists
+    with open("data_log_finalTest.csv", "w") as file: # w is for write, which overwrites the file if it already exists
         file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
         current_time = 0
 
