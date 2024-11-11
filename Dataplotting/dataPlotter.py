@@ -7,7 +7,7 @@ voltage_data = []
 resistance_data = []
 
 # Read data from CSV file on the Pico
-with open("Dataplotting/data_log_finalTest.csv", "r") as file:
+with open("Dataplotting/data_log9.csv", "r") as file:
     reader = csv.reader(file)
     next(reader)  # Skip the header row
     for row in reader:
