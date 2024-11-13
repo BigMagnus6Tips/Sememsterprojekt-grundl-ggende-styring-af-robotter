@@ -179,7 +179,6 @@ class StepperMotor:
         for _ in range(steps):
             self.step()
             await uasyncio.sleep(self.delay)
-        print("stopper nu")
         
         # sets the PWM duty cycle to 0 to make sure current does not run after use
         self.stop()
@@ -280,9 +279,9 @@ class DifferentialDriver():
         return round(stepsToGo)
     
     
-    # function to go forward and backwards by makins steps variable negative
+    # function to go forward and backwards by making steps variable negative
     async def goForward(self, steps):
-        #calls the move function for multistepper with steps
+        # calls the move function for multistepper with steps
         await self.multiStepper.move([steps, steps])
     
     # function to go forward a given distance
@@ -355,15 +354,51 @@ async def monitorStart():
             # This is for plotting the time in the csv file.
             current_time += 0.1
 
+class JoystickController:
+    def __init__(self, multiStepper):
+        self.multiStepper = multiStepper
+
+    async def JoystickMove(self):
+        xAxis = ADC(Pin(27))
+        yAxis = ADC(Pin(26))
+        xAxisValue = xAxis.read_u16()
+        yAxisValue = yAxis.read_u16()
+        # So in order to have 0,0 in the middle of the joystick, we need to subtract 32768 from the value
+        # And in order to have a range from -1 to 1, we need to divide by 32768
+        xAxisNorm = (xAxisValue - 32768) / 32768
+        yAxisNorm = (yAxisValue - 32768) / 32768
+
+        multiStepper.set_Speed([200*abs(yAxisNorm), 200*abs(yAxisNorm)])
+
+        print("x: {:.2f} y: {:.2f}".format(xAxisNorm, yAxisNorm))
+
+        # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
+        #if yAxisNorm > 0.2 and xAxisNorm > 0.2:
+            #await self.multiStepper.move([-1, -1])
+        if yAxisNorm > 0.2:
+            await self.multiStepper.move([-1, -1])
+        elif yAxisNorm < -0.2:
+            await self.multiStepper.move([1, 1])
+        elif xAxisNorm < -0.2:
+            multiStepper.set_Speed([200*abs(xAxisNorm), 200*abs(xAxisNorm)])
+            await self.multiStepper.move([1, -1])
+        elif xAxisNorm > 0.2:
+            multiStepper.set_Speed([200*abs(xAxisNorm), 200*abs(xAxisNorm)])
+            await self.multiStepper.move([-1, 1])
 
 
 # function to start the program
 async def start():
     print("Starts")
     global shouldMonitor # Because then it can be used in the monitorStart function
-    shouldMonitor = True
+    shouldMonitor = False # The program starts by not monitoring.
     uasyncio.create_task(monitorStart())
-    await car.inPlaceRotation(180)
+    #await car.goForwardGivenDistance(10)
+
+    while True:
+        await joystickcontroller.JoystickMove()
+
+
     shouldMonitor = False # Then the program stops monitoring.
 
 if __name__ == '__main__':
@@ -391,11 +426,13 @@ if __name__ == '__main__':
 
     # makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
+
+    joystickcontroller = JoystickController(multiStepper)
+
     sleep(1)
     try:
         uasyncio.run(start())
     except:
-        print("Stopper programmet")
         multiStepper.stop()
 
 
