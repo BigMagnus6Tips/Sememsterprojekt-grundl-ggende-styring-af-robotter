@@ -21,6 +21,7 @@ plt.figure(figsize=(10, 5))
 # Plot Voltage over Time
 plt.subplot(2, 1, 1)
 plt.plot(time_data, voltage_data, label="Voltage (V)", color="blue")
+plt.plot([0,time_data[-1]], [1.2,1.2], linestyle="--", color="red", label="Threshold")
 plt.xlabel("Time (s)")
 plt.ylabel("Voltage (V)")
 plt.title("Voltage and Resistance over Time")
