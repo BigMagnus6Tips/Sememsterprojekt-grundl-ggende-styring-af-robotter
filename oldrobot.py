@@ -368,9 +368,7 @@ class JoystickController:
         xAxisNorm = (xAxisValue - 32768) / 32768
         yAxisNorm = (yAxisValue - 32768) / 32768
 
-        multiStepper.set_Speed([200*abs(yAxisNorm), 200*abs(yAxisNorm)])
-
-        print("x: {:.2f} y: {:.2f}".format(xAxisNorm, yAxisNorm))
+        multiStepper.set_Speed([400*abs(yAxisNorm), 400*abs(yAxisNorm)])
 
         # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
         #if yAxisNorm > 0.2 and xAxisNorm > 0.2:
@@ -380,10 +378,10 @@ class JoystickController:
         elif yAxisNorm < -0.2:
             await self.multiStepper.move([1, 1])
         elif xAxisNorm < -0.2:
-            multiStepper.set_Speed([200*abs(xAxisNorm), 200*abs(xAxisNorm)])
+            multiStepper.set_Speed([400*abs(xAxisNorm), 400*abs(xAxisNorm)])
             await self.multiStepper.move([1, -1])
         elif xAxisNorm > 0.2:
-            multiStepper.set_Speed([200*abs(xAxisNorm), 200*abs(xAxisNorm)])
+            multiStepper.set_Speed([400*abs(xAxisNorm), 400*abs(xAxisNorm)])
             await self.multiStepper.move([-1, 1])
 
 
