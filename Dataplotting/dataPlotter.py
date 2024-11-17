@@ -6,8 +6,11 @@ time_data = []
 voltage_data = []
 resistance_data = []
 
+THRESHOLD = 1.2
+
+
 # Read data from CSV file on the Pico
-with open("Dataplotting/data_log9.csv", "r") as file:
+with open("Dataplotting/data_log5.csv", "r") as file:
     reader = csv.reader(file)
     next(reader)  # Skip the header row
     for row in reader:
@@ -21,13 +24,14 @@ plt.figure(figsize=(10, 5))
 # Plot Voltage over Time
 plt.subplot(2, 1, 1)
 plt.plot(time_data, voltage_data, label="Voltage (V)", color="blue")
+plt.plot([0,time_data[-1]], [THRESHOLD,THRESHOLD], linestyle="--", color="red", label="Threshold")
 plt.xlabel("Time (s)")
 plt.ylabel("Voltage (V)")
 plt.title("Voltage and Resistance over Time")
 plt.legend()
 plt.grid()
 
-# Plot Resistance over Time
+# Plot Resistance over Timew
 plt.subplot(2, 1, 2)
 plt.plot(time_data, resistance_data, label="Resistance (Ohm)", color="green")
 plt.xlabel("Time (s)")
