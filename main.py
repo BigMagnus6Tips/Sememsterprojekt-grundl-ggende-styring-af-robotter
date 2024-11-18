@@ -172,7 +172,7 @@ class StepperMotor:
             self.forward = True
         else:
             self.forward = False
-            # makes the steps positive if negative to go thgough it in a for loop
+            # makes the steps positive if negative to go through it in a for loop
             steps = -steps
         
         # takes as many steps as specified
@@ -367,7 +367,6 @@ class JoystickController:
         # And in order to have a range from -1 to 1, we need to divide by 32768
         xAxisNorm = (xAxisValue - 32768) / 32768
         yAxisNorm = (yAxisValue - 32768) / 32768
-        print(xAxisNorm, yAxisNorm)
 
         multiStepper.set_Speed([400*abs(yAxisNorm), 400*abs(yAxisNorm)])
 
@@ -386,18 +385,27 @@ class JoystickController:
             multiStepper.set_Speed([400*abs(xAxisNorm), 400*abs(xAxisNorm)])
             await self.multiStepper.move([-1, 1])
 
+# KillSwitch function
+def interruption_handler(pin):
+    print("KillSwitch activated")
+    global KillSwitch
+    KillSwitch = True
 
 # function to start the program
 async def start():
+
     print("Starts")
+
     global shouldMonitor # Because then it can be used in the monitorStart function
     shouldMonitor = False
     uasyncio.create_task(monitorStart())
     # await car.inPlaceRotation(180)
     shouldMonitor = False # Then the program stops monitoring.
-
-    while True:
+    global KillSwitch
+    while not KillSwitch:
+        # print(KillSwitchButton.value())
         await joystickcontroller.JoystickMove()
+    
 
 if __name__ == '__main__':
 
@@ -427,6 +435,11 @@ if __name__ == '__main__':
 
     joystickcontroller = JoystickController(multiStepper)
 
+    # First KillSwitch is set to False, but if the button connected to pin 22 is pressed it is set to True and interrupts the program.
+    KillSwitch = False
+    KillSwitchButton = Pin(22, Pin.IN, Pin.PULL_UP)
+    KillSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
+    
     sleep(1)
     try:
         uasyncio.run(start())
