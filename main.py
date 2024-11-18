@@ -367,20 +367,22 @@ class JoystickController:
         # And in order to have a range from -1 to 1, we need to divide by 32768
         xAxisNorm = (xAxisValue - 32768) / 32768
         yAxisNorm = (yAxisValue - 32768) / 32768
+        print(xAxisNorm, yAxisNorm)
 
         multiStepper.set_Speed([400*abs(yAxisNorm), 400*abs(yAxisNorm)])
 
         # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
         #if yAxisNorm > 0.2 and xAxisNorm > 0.2:
             #await self.multiStepper.move([-1, -1])
-        if yAxisNorm > 0.2:
+        deadZone = 0.1
+        if yAxisNorm > deadZone:
             await self.multiStepper.move([-1, -1])
-        elif yAxisNorm < -0.2:
+        elif yAxisNorm < -deadZone:
             await self.multiStepper.move([1, 1])
-        elif xAxisNorm < -0.2:
+        elif xAxisNorm < -deadZone:
             multiStepper.set_Speed([400*abs(xAxisNorm), 400*abs(xAxisNorm)])
             await self.multiStepper.move([1, -1])
-        elif xAxisNorm > 0.2:
+        elif xAxisNorm > deadZone:
             multiStepper.set_Speed([400*abs(xAxisNorm), 400*abs(xAxisNorm)])
             await self.multiStepper.move([-1, 1])
 
@@ -391,7 +393,7 @@ async def start():
     global shouldMonitor # Because then it can be used in the monitorStart function
     shouldMonitor = False
     uasyncio.create_task(monitorStart())
-    await car.inPlaceRotation(180)
+    # await car.inPlaceRotation(180)
     shouldMonitor = False # Then the program stops monitoring.
 
     while True:
