@@ -8,9 +8,8 @@ resistance_data = []
 
 THRESHOLD = 1.2
 
-
 # Read data from CSV file on the Pico
-with open("Dataplotting/data_log5.csv", "r") as file:
+with open("name_me_something.csv", "r") as file:
     reader = csv.reader(file)
     next(reader)  # Skip the header row
     for row in reader:

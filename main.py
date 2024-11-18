@@ -332,7 +332,7 @@ class DifferentialDriver():
 
 async def monitorStart():
     global shouldMonitor
-    with open("data_log.csv", "w") as file: # w is for write, which overwrites the file if it already exists
+    with open("without_shield_with_LED2.csv", "w") as file: # w is for write, which overwrites the file if it already exists
         file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
         current_time = 0
 
@@ -389,15 +389,13 @@ class JoystickController:
 async def start():
     print("Starts")
     global shouldMonitor # Because then it can be used in the monitorStart function
-    shouldMonitor = False # The program starts by not monitoring.
+    shouldMonitor = False
     uasyncio.create_task(monitorStart())
-    #await car.goForwardGivenDistance(10)
+    await car.inPlaceRotation(180)
+    shouldMonitor = False # Then the program stops monitoring.
 
     while True:
         await joystickcontroller.JoystickMove()
-
-
-    shouldMonitor = False # Then the program stops monitoring.
 
 if __name__ == '__main__':
 
