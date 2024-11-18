@@ -1,4 +1,7 @@
-Vi målte modstanden på LDR’en til at være omkring 400 ohm når der var lys til 70kohm når der ikke var lys. 
+Vi målte modstanden på LDR’en til at være omkring 400 ohm når der var lys til 70 kohm når der ikke var lys. 
 Derfor har vi valgt en modstand på 10 kohm for at få det største spænd. De leder nemmere når der er lys, 
-så der er lav modstand. Bagefter
-
+så der er lav modstand.
+Efter vi havde målt spændingen over LDR’en uden LED valgte vi at sætte en LED ved siden af for at sørge for
+at LDR'en måler lidt mere stabilt. For at gøre det endnu bedre valgte vi at 3D printe et skjold sådan at LDR'en 
+var isoleret med LED'en. Efter vi havde gjort dette fik vi et meget større spændingsfald over LDR'en, sådan at det
+var endnu tydeligere hvornår robotten ser sort.
