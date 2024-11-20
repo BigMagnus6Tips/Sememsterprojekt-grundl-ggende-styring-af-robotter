@@ -47,44 +47,8 @@ async def start():
 
     global KillSwitch
     while not KillSwitch:
-        # print(KillSwitchButton.value())
         await joystickcontroller.JoystickMove()
     
-
-if __name__ == '__main__':
-
-    # Set up the ADC pin (choose one of GP26, GP27, or GP28 for ADC on Pico W)
-    adc_pin = ADC(Pin(26))  # GP26 is labeled as ADC0 on Pico found in the Kicad drawing
-
-    # Reference voltage for the Pico W is typically 3.3V
-    REFERENCE_VOLTAGE = 3.3
-    R2 = 2200  # Known resistor value in the voltage divider circuit. We chose this resistor to get a linear graph for the LDR, so that we could get as big of a span as possible.
-
-
-
-    print("Starts")
-
-    # Makes objects for the motor
-    motorRight = StepperMotor([0,1,2,3], 0.15, 18000, StepperMotor.half_step)
-    motorLeft = StepperMotor([4,5,6,7], 0.15, 18000, StepperMotor.half_step)
-
-    # makes multistepper object with the motors
-    multiStepper = MultiStepper([motorLeft, motorRight])
-
-    # set their delays
-    multiStepper.set_Delays([0.01,0.01])
-
-    # makes a differentialDriver object
-    car = DifferentialDriver(multiStepper)
-
-    joystickcontroller = JoystickController()
-
-    sleep(1)
-    try:
-        uasyncio.run(start())
-    except:
-        multiStepper.stop()
-
 
 
 if __name__ == '__main__':
