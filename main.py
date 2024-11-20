@@ -47,7 +47,7 @@ async def start():
 
     global KillSwitch
     while not KillSwitch:
-        await joystickcontroller.JoystickMove()
+        pass
     
 
 

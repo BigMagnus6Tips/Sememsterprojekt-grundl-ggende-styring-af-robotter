@@ -2,6 +2,8 @@ import network
 import time
 import socket
 from WifiClasses import WifiSTA
+from RobotClasses import JoystickController
+from machine import Pin
 """
 Must be nikolais pico because it works
 """
@@ -11,22 +13,20 @@ PASSWORD = "PASSWORD"
 
 wifiSTA = WifiSTA(SSID, PASSWORD)
 
-kill_switch 
+joystickController = JoystickController()
 
-KillSwitch = False
-KillSwitchButton = Pin(22, Pin.IN, Pin.PULL_UP)
-KillSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
 
-time.sleep(3)
+
+time.sleep(1)
 
 counter = 0
-KillSwitch = 572
 try:
     while True:
         counter = counter+1
         wifiSTA.client.send(counter.to_bytes(3, 'big'))
-        time.sleep(1)
         print("Sent: ", counter)
+        time.sleep(1)
+
     
     
 except KeyboardInterrupt:

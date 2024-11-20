@@ -332,9 +332,9 @@ class DifferentialDriver():
 
 class JoystickController:
 
-    async def JoystickMove(self):
-        xAxis = ADC(Pin(27))
-        yAxis = ADC(Pin(26))
+    async def JoystickMove(self, pin1, pin2):
+        xAxis = ADC(Pin(pin1))
+        yAxis = ADC(Pin(pin2))
         xAxisValue = xAxis.read_u16()
         yAxisValue = yAxis.read_u16()
         # So in order to have 0,0 in the middle of the joystick, we need to subtract 32768 from the value
