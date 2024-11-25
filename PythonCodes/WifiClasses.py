@@ -2,6 +2,21 @@ import network
 import socket
 import time
 
+class ConstantsForCommunication:
+    #Indexes 
+    indexJoystick = 0
+    indexSpeedLeft = 1
+    indexSpeedRight = 2
+    
+    #Values
+    forward = 1
+    backward = 2
+    clockwise = 3
+    counterclockwise = 4
+    
+    
+
+
 class WifiSTA:
     def __init__(self, ssid, password):
         self.connect_to_wifi(ssid, password)
