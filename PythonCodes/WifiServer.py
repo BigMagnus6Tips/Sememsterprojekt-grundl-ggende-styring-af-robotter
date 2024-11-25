@@ -23,9 +23,7 @@ try:
             if not data:
                 break
             print("Received:", list(data))
-            print(data[comms.indexJoystick])
-            print(data[comms.indexSpeedLeft])
-            print(data[comms.indexSpeedRight])
+
 
 
 except Exception as e:

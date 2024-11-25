@@ -7,13 +7,8 @@ class ConstantsForCommunication:
     indexJoystick = 0
     indexSpeedLeft = 1
     indexSpeedRight = 2
-    
-    #Values
-    forward = 1
-    backward = 2
-    clockwise = 3
-    counterclockwise = 4
-    
+    indexMotorLeftDirection = 3
+    indecMotorRightDirection = 4
     
 
 
