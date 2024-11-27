@@ -336,7 +336,7 @@ class JoystickController:
         self.xAxis = ADC(Pin(pin1))
         self.yAxis = ADC(Pin(pin2))
     
-    def joystickMove(self):
+    def joystickReadMovements(self):
 
         xAxisValue = self.xAxis.read_u16()
         yAxisValue = self.yAxis.read_u16()
