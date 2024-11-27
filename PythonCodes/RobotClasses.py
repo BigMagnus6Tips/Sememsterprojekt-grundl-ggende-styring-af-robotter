@@ -332,11 +332,14 @@ class DifferentialDriver():
 
 class JoystickController:
 
-    async def JoystickMove(self, pin1, pin2):
-        xAxis = ADC(Pin(pin1))
-        yAxis = ADC(Pin(pin2))
-        xAxisValue = xAxis.read_u16()
-        yAxisValue = yAxis.read_u16()
+    def __init__(self, pin1, pin2):
+        self.xAxis = ADC(Pin(pin1))
+        self.yAxis = ADC(Pin(pin2))
+    
+    def joystickMove(self):
+
+        xAxisValue = self.xAxis.read_u16()
+        yAxisValue = self.yAxis.read_u16()
         # So in order to have 0,0 in the middle of the joystick, we need to subtract 32768 from the value
         # And in order to have a range from -1 to 1, we need to divide by 32768
         xAxisNorm = (xAxisValue - 32768) / 32768
@@ -356,4 +359,6 @@ class JoystickController:
             return [[1, -1],[400*abs(xAxisNorm), 400*abs(xAxisNorm)]]
         elif xAxisNorm > deadZone:
             return [[-1, 1],[400*abs(xAxisNorm), 400*abs(xAxisNorm)]]
+        else:
+            return [[0, 0],[0, 0]]
 
