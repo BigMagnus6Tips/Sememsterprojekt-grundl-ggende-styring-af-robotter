@@ -23,7 +23,7 @@ time.sleep(1)
 data = [0, 0, 0, 0, 0, 0]
 
 def updateData():
-    controllerOutput = joystickController.ReadMovements()
+    controllerOutput = joystickController.readMovements()
     data[comms.indexSpeedLeftBig] = controllerOutput[1][0]//256
     data[comms.indexSpeedLeftLittle] = controllerOutput[1][0]%256
     
