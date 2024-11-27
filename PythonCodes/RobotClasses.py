@@ -344,7 +344,10 @@ class JoystickController:
         # And in order to have a range from -1 to 1, we need to divide by 32768
         xAxisNorm = (xAxisValue - 32768) / 32768
         yAxisNorm = (yAxisValue - 32768) / 32768
-        print(xAxisNorm, yAxisNorm)
+        
+        
+        xAxisNorm = round(abs(xAxisNorm)*400)
+        yAxisNorm = round(abs(yAxisNorm)*400)
 
 
         # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
@@ -352,13 +355,13 @@ class JoystickController:
             #await self.multiStepper.move([-1, -1])
         deadZone = 0.1
         if yAxisNorm > deadZone:
-            return [[-1, -1],[400*abs(yAxisNorm), 400*abs(yAxisNorm)]]
+            return [[-1, -1],[yAxisNorm, yAxisNorm]]
         elif yAxisNorm < -deadZone:
-            return [[1, 1],[400*abs(yAxisNorm), 400*abs(yAxisNorm)]]
+            return [[1, 1],[yAxisNorm, yAxisNorm]]
         elif xAxisNorm < -deadZone:
-            return [[1, -1],[400*abs(xAxisNorm), 400*abs(xAxisNorm)]]
+            return [[1, -1],[xAxisNorm, xAxisNorm]]
         elif xAxisNorm > deadZone:
-            return [[-1, 1],[400*abs(xAxisNorm), 400*abs(xAxisNorm)]]
+            return [[-1, 1],[xAxisNorm, xAxisNorm]]
         else:
             return [[0, 0],[0, 0]]
 

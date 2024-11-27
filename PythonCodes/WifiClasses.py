@@ -4,10 +4,12 @@ import time
 
 class ConstantsForCommunication:
     #Indexes 
-    indexSpeedLeft = 0
-    indexSpeedRight = 1
-    indexMotorLeftDirection = 2
-    indexMotorRightDirection = 3
+    indexSpeedLeftBig = 0
+    indexSpeedLeftLittle = 1
+    indexSpeedRightBig = 2
+    indexSpeedRightLittle = 3
+    indexMotorLeftDirection = 4
+    indexMotorRightDirection = 5
     
 
 
