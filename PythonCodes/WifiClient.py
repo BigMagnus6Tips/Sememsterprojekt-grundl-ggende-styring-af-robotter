@@ -4,6 +4,7 @@ import socket
 from WifiClasses import WifiSTA
 from RobotClasses import JoystickController
 from machine import Pin
+from WifiClasses import ConstantsForCommunication as comms
 """
 Must be nikolais pico because it works
 """
@@ -19,15 +20,19 @@ joystickController = JoystickController()
 
 time.sleep(1)
 
-counter = 0
+data = [0, 0, 0, 0,]
+data[comms.indexMotorRightDirection] = 1
+data[comms.indexMotorLeftDirection] = 1
+data[comms.indexSpeedLeft] = 100
+data[comms.indexSpeedRight] = 100
 try:
     while True:
-        counter = counter+1
-        wifiSTA.client.send(counter.to_bytes(3, 'big'))
-        print("Sent: ", counter)
+        wifiSTA.client.send(bytes(data))
+        print("Sent: ", data)
         time.sleep(1)
 
     
     
-except KeyboardInterrupt:
+except Exception as e:
+    print(e)
     wifiSTA.client.close()
