@@ -23,6 +23,7 @@ joystickController = JoystickController("GP27", "GP28")
 data = [0, 0, 0, 0, 0, 0, 0]
 led = machine.Pin("LED", machine.Pin.OUT)
 joystickController.addButton("GP22")
+leds = [machine.Pin("GP9", machine.Pin.OUT), machine.Pin("GP8", machine.Pin.OUT), machine.Pin("GP7", machine.Pin.OUT), machine.Pin("GP6", machine.Pin.OUT)]
 
 _DEVICE_INFO_UUID = bluetooth.UUID(0x180A) # Device Information
 _GENERIC = bluetooth.UUID(0x1848)
@@ -120,17 +121,10 @@ async def peripheral_task():
             print("disconnected")
 
 async def blink_task():
-    """ Task to blink LED """
-    toggle = True
-    while True:
-        led.value(toggle)
-        toggle = not toggle
-        blink = 1000
-        if connected:
-            blink = 1000
-        else:
-            blink = 250
-        await asyncio.sleep_ms(blink)
+    
+
+
+        await asyncio.sleep_ms(500)
 
 async def main():
     tasks = [
