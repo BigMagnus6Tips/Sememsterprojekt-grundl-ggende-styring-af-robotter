@@ -19,7 +19,7 @@ wifiAP = WifiAP(ssid, password)
 try:
     while True:
         while True:
-            data = wifiAP.conn.recv(1024)  # Receive up to 1024 bytes
+            data = wifiAP.conn.recv(6)  # Receive up to 1024 bytes
             if not data:
                 break
             print("Received:", list(data))
