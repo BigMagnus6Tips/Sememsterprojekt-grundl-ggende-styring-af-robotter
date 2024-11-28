@@ -211,6 +211,10 @@ class MultiStepper():
     
     # Function to set speed for motors as steps per second
     def set_Speed(self, speeds):
+        if 0 in speeds:
+            print("Speed must be non-zero")
+            return 0       
+        
         
         # again chekcs the lenght of the speeds given
         if len(speeds) != len(self.stepperMotors):
@@ -252,6 +256,10 @@ class MultiStepper():
     # function to get modes of the stepper motors
     def getModes(self):
         return [stepperMotor.mode for stepperMotor in self.stepperMotors]
+
+    
+    def getDelays(self):
+        return [stepperMotor.delay for stepperMotor in self.stepperMotors]
 
 
 # Class for the differential driver

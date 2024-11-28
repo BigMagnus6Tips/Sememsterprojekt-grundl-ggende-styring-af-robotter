@@ -83,16 +83,23 @@ async def peripheral_task():
             except uasyncio.TimeoutError:
                 print("Timeout discovering services/characteristics")
                 return
-            while True:
+            while not KillSwitch:
                 if control_characteristic != None:
                     try:
                         data = await control_characteristic.read()
                         listData = list(data)
-                        dataFromController = [[listData[comms.indexSpeedLeftBig]*256+listData[comms.indexSpeedLeftLittle], 
-                                               listData[comms.indexSpeedRightBig]*256+listData[comms.indexSpeedRightLittle]], 
-                                              [listData[comms.indexMotorLeftDirection]-1, listData[comms.indexMotorRightDirection]-1],
-                                               listData[comms.indexButton]]
-                        print(listData)
+                        if len(listData) != 0:
+                            dataFromController = [[listData[comms.indexSpeedLeftBig]*256+listData[comms.indexSpeedLeftLittle], 
+                                                listData[comms.indexSpeedRightBig]*256+listData[comms.indexSpeedRightLittle]], 
+                                                [listData[comms.indexMotorLeftDirection]-1, listData[comms.indexMotorRightDirection]-1],
+                                                listData[comms.indexButton]]
+                            if dataFromController[2] == 0:
+                                print("Button pressed")
+                                connected = False
+                                alive = False
+                                global KillSwitch
+                                KillSwitch = True
+                                return
                         
                     except TypeError:
                         print(f'something went wrong; remote disconnected?')
@@ -114,26 +121,41 @@ async def peripheral_task():
                 await uasyncio.sleep_ms(10)
 
 async def moveFromControllerData():
-    #multiStepper.set_Speed[dataFromController[comms.indexSpeedLeftBig]p, dataFromController[1]]
-    #multiStepper.move()
-    pass
+    print( "MoveFromControllerData")
+    while not KillSwitch:
+        if 0 not in dataFromController[0]:
+            multiStepper.set_Speed(dataFromController[0])
+            await multiStepper.move(dataFromController[1])
+        else:
+            await uasyncio.sleep(0.05)
+
+
+
     
 
 
 # KillSwitch function
 def interruption_handler(pin):
-    print("KillSwitch activated")
     global KillSwitch
     KillSwitch = True
+
+async def blinkLed():
+    while not KillSwitch:
+        onBoardLed.toggle()
+        await uasyncio.sleep(0.5)
+
 
 
 # function to start the program
 async def start():
-    print("Starts")
+    print("Starts2")
     global shouldMonitor # Because then it can be used in the monitorStart function
     shouldMonitor = False
     #uasyncio.create_task(monitorStart())
     uasyncio.create_task(peripheral_task())
+    uasyncio.create_task(moveFromControllerData())
+    print("LDNF")
+    #uasyncio.create_task(blinkLed())
     # await car.inPlaceRotation(180)
     shouldMonitor = False # Then the program stops monitoring.
 
@@ -145,6 +167,8 @@ async def start():
 
 if __name__ == '__main__':
 
+
+    onBoardLed = Pin("LED", Pin.OUT)
 
     _REMOTE_UUID = bluetooth.UUID(0x1848)
     _ENV_SENSE_UUID = bluetooth.UUID(0x1878) 
@@ -168,8 +192,9 @@ if __name__ == '__main__':
     print("Starts")
 
     # Makes objects for the motor
-    motorRight = StepperMotor([0,1,2,3], 0.15, 18000, StepperMotor.half_step)
-    motorLeft = StepperMotor([4,5,6,7], 0.15, 18000, StepperMotor.half_step)
+    motorRight = StepperMotor([0,1,2,3], 0.2, 18000, StepperMotor.half_step)
+    motorLeft = StepperMotor([4,5,6,7], 0.2, 18000, StepperMotor.half_step)
+
 
     # makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
@@ -177,18 +202,18 @@ if __name__ == '__main__':
     # set their delays
     multiStepper.set_Delays([0.01,0.01])
 
+
     # makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
 
-    dataFromController = [0,0,0,0,0,0,0]
+    dataFromController = [[0,0], [0,0], 1]
 
 
     # First KillSwitch is set to False, but if the button connected to pin 22 is pressed it is set to True and interrupts the program.
     KillSwitch = False
     KillSwitchButton = Pin(22, Pin.IN, Pin.PULL_UP)
-    KillSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
+    #KillSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
     
-    sleep(1)
     try:
         uasyncio.run(start())
     except KeyboardInterrupt:
