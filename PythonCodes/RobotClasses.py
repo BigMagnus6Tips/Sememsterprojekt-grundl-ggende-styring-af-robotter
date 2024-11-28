@@ -336,32 +336,34 @@ class JoystickController:
         self.xAxis = ADC(Pin(pin1))
         self.yAxis = ADC(Pin(pin2))
     
+    def addButton(self, pin):
+        self.button = Pin(pin, Pin.IN, Pin.PULL_UP)
+    
     def readMovements(self):
-
+        print(self.button.value())
         xAxisValue = self.xAxis.read_u16()
         yAxisValue = self.yAxis.read_u16()
         # So in order to have 0,0 in the middle of the joystick, we need to subtract 32768 from the value
         # And in order to have a range from -1 to 1, we need to divide by 32768
-        xAxisNorm = (xAxisValue - 32768) / 32768
-        yAxisNorm = (yAxisValue - 32768) / 32768
+        xAxisNorm = -((xAxisValue - 32768) / 32768)
+        yAxisNorm = -((yAxisValue - 32768) / 32768)
         
         
-        xAxisNorm = round(abs(xAxisNorm)*400)
-        yAxisNorm = round(abs(yAxisNorm)*400)
-
+        xAxisNorm = round(xAxisNorm*400)
+        yAxisNorm = round(yAxisNorm*400)
 
         # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
         #if yAxisNorm > 0.2 and xAxisNorm > 0.2:
             #await self.multiStepper.move([-1, -1])
         deadZone = 0.1
-        if yAxisNorm > deadZone:
-            return [[-1, -1],[yAxisNorm, yAxisNorm]]
-        elif yAxisNorm < -deadZone:
-            return [[1, 1],[yAxisNorm, yAxisNorm]]
-        elif xAxisNorm < -deadZone:
-            return [[1, -1],[xAxisNorm, xAxisNorm]]
-        elif xAxisNorm > deadZone:
-            return [[-1, 1],[xAxisNorm, xAxisNorm]]
+        if yAxisNorm > deadZone*400:
+            return [[-1, -1],[yAxisNorm, yAxisNorm],self.button.value()]
+        elif yAxisNorm < -deadZone*400:
+            return [[1, 1],[yAxisNorm, yAxisNorm],self.button.value()]
+        elif xAxisNorm < -deadZone*400:
+            return [[1, -1],[xAxisNorm, xAxisNorm],self.button.value()]
+        elif xAxisNorm > deadZone*400:
+            return [[-1, 1],[xAxisNorm, xAxisNorm],self.button.value()]
         else:
-            return [[0, 0],[0, 0]]
+            return [[0, 0],[0, 0],self.button.value()]
 

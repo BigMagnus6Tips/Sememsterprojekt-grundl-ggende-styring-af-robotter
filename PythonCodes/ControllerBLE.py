@@ -19,9 +19,10 @@ SERIAL_NUMBER_ID = const(0x2A25)
 HARDWARE_REVISION_ID = const(0x2A26)
 BLE_VERSION_ID = const(0x2A28)
 
-joystickController = JoystickController("GP28", "GP27")
-data = [0, 0, 0, 0, 0, 0]
+joystickController = JoystickController("GP27", "GP28")
+data = [0, 0, 0, 0, 0, 0, 0]
 led = machine.Pin("LED", machine.Pin.OUT)
+joystickController.addButton("GP22")
 
 _DEVICE_INFO_UUID = bluetooth.UUID(0x180A) # Device Information
 _GENERIC = bluetooth.UUID(0x1848)
@@ -56,14 +57,17 @@ connected = False
 
 def updateData():
     controllerOutput = joystickController.readMovements()
-    data[comms.indexSpeedLeftBig] = controllerOutput[1][0]//256
-    data[comms.indexSpeedLeftLittle] = controllerOutput[1][0]%256
+    print(controllerOutput)
+    data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0]//256)
+    data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0]%256)
     
-    data[comms.indexSpeedRightBig] = controllerOutput[1][1]//256
-    data[comms.indexSpeedRightLittle] = controllerOutput[1][1]%256
+    data[comms.indexSpeedRightBig] = abs(controllerOutput[1][1]//256)
+    data[comms.indexSpeedRightLittle] = abs(controllerOutput[1][1]%256)
     
     data[comms.indexMotorLeftDirection] = controllerOutput[0][0]+1
     data[comms.indexMotorRightDirection] = controllerOutput[0][1]+1
+
+    data[comms.indexButton] = controllerOutput[2]
 
 async def remote_task():
     """ Task to handle remote control """

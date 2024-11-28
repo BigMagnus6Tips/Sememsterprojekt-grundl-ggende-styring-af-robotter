@@ -10,6 +10,7 @@ class ConstantsForCommunication:
     indexSpeedRightLittle = 3
     indexMotorLeftDirection = 4
     indexMotorRightDirection = 5
+    indexButton = 6
     
 
 
