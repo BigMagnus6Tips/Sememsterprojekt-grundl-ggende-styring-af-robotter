@@ -7,7 +7,7 @@ import uasyncio as asyncio
 from micropython import const
 from RobotClasses import JoystickController
 from WifiClasses import ConstantsForCommunication as comms
-
+import ssd1306_OLED
 def uid():
     """ Return the unique id of the device as a string """
     return "{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}".format(
@@ -23,6 +23,9 @@ joystickController = JoystickController("GP27", "GP28")
 data = [0, 0, 0, 0, 0, 0, 0]
 joystickController.addButton("GP22")
 leds = [machine.Pin("GP9", machine.Pin.OUT), machine.Pin("GP8", machine.Pin.OUT), machine.Pin("GP7", machine.Pin.OUT), machine.Pin("GP6", machine.Pin.OUT)]
+
+OLEDI2C = machine.I2C(0, scl=machine.Pin(13), sda=machine.Pin(12))
+display = ssd1306_OLED.SSD1306_I2C(128, 64, OLEDI2C)
 
 _DEVICE_INFO_UUID = bluetooth.UUID(0x180A) # Device Information
 _GENERIC = bluetooth.UUID(0x1848)
@@ -57,6 +60,7 @@ connected = False
 
 def updateData():
     controllerOutput = joystickController.readMovements()
+    updateOLED(controllerOutput)
     #print(controllerOutput)
     data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0])//256
     data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0])%256
@@ -68,6 +72,15 @@ def updateData():
     data[comms.indexMotorRightDirection] = controllerOutput[0][1]+1
 
     data[comms.indexButton] = controllerOutput[2]
+
+def updateOLED(controllerOutput):
+    display.fill(0)
+    display.text('Speeds: '+ (controllerOutput[1]), 40, 0, 1)
+    display.text('Directions: '+ (controllerOutput[0]), 40, 0, 1)
+    display.show()
+
+
+
 
 async def remote_task():
     """ Task to handle remote control """
@@ -135,6 +148,6 @@ async def main():
         asyncio.create_task(remote_task()),
         asyncio.create_task(blink_task()),
     ]
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)  # type: ignore
 
 asyncio.run(main())
