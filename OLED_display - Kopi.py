@@ -1,8 +1,8 @@
 from machine import I2C, Pin
-import ssd1306  # Import the SSD1306 driver
+import ssd1306_OLED as ssd1306  # Import the SSD1306 driver
 
 # Initialize I2C with correct pins (SCL and SDA)
-i2c = I2C(0, scl=Pin(5), sda=Pin(4))  # Replace with your correct pins
+i2c = I2C(0, scl=Pin('GPIO13'), sda=Pin('GPIO12'))  # Replace with your correct pins
 
 # Initialize the SSD1306 OLED display (128x64 resolution)
 display = ssd1306.SSD1306_I2C(128, 64, i2c)
