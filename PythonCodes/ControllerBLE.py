@@ -21,7 +21,6 @@ BLE_VERSION_ID = const(0x2A28)
 
 joystickController = JoystickController("GP27", "GP28")
 data = [0, 0, 0, 0, 0, 0, 0]
-led = machine.Pin("LED", machine.Pin.OUT)
 joystickController.addButton("GP22")
 leds = [machine.Pin("GP9", machine.Pin.OUT), machine.Pin("GP8", machine.Pin.OUT), machine.Pin("GP7", machine.Pin.OUT), machine.Pin("GP6", machine.Pin.OUT)]
 
@@ -117,14 +116,18 @@ async def peripheral_task():
             print("Connection from, ", connection.device)
             connected = True
             print("connected {connected}")
+            leds[1].value(1)
             await connection.disconnected()
             print("disconnected")
+            leds[1].value(0)
 
 async def blink_task():
     
+    leds[0].value(1)
 
+    
 
-        await asyncio.sleep_ms(500)
+    await asyncio.sleep_ms(500)
 
 async def main():
     tasks = [
