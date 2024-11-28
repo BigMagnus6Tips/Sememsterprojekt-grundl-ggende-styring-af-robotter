@@ -57,12 +57,12 @@ connected = False
 
 def updateData():
     controllerOutput = joystickController.readMovements()
-    print(controllerOutput)
-    data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0]//256)
-    data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0]%256)
+    #print(controllerOutput)
+    data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0])//256
+    data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0])%256
     
-    data[comms.indexSpeedRightBig] = abs(controllerOutput[1][1]//256)
-    data[comms.indexSpeedRightLittle] = abs(controllerOutput[1][1]%256)
+    data[comms.indexSpeedRightBig] = abs(controllerOutput[1][1])//256
+    data[comms.indexSpeedRightLittle] = abs(controllerOutput[1][1])%256
     
     data[comms.indexMotorLeftDirection] = controllerOutput[0][0]+1
     data[comms.indexMotorRightDirection] = controllerOutput[0][1]+1
@@ -78,6 +78,7 @@ async def remote_task():
             await asyncio.sleep_ms(1000)
             continue
         updateData()
+        print("Data: ", data)
         joystick_characteristic.write(bytes(data))
         joystick_characteristic.notify(connection, b"x")
         """if button_a.read():
