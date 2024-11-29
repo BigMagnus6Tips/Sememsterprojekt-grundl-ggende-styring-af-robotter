@@ -24,8 +24,13 @@ data = [0, 0, 0, 0, 0, 0, 0]
 joystickController.addButton("GP22")
 leds = [machine.Pin("GP9", machine.Pin.OUT), machine.Pin("GP8", machine.Pin.OUT), machine.Pin("GP7", machine.Pin.OUT), machine.Pin("GP6", machine.Pin.OUT)]
 
+
 OLEDI2C = machine.I2C(0, scl=machine.Pin(13), sda=machine.Pin(12))
 display = ssd1306_OLED.SSD1306_I2C(128, 64, OLEDI2C)
+display.fill(0)
+display.rotate(0)
+display.text('Humles Joystick', 0, 0, 1)
+display.show()
 
 _DEVICE_INFO_UUID = bluetooth.UUID(0x180A) # Device Information
 _GENERIC = bluetooth.UUID(0x1848)
@@ -60,7 +65,6 @@ connected = False
 
 def updateData():
     controllerOutput = joystickController.readMovements()
-    updateOLED(controllerOutput)
     #print(controllerOutput)
     data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0])//256
     data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0])%256
@@ -73,11 +77,22 @@ def updateData():
 
     data[comms.indexButton] = controllerOutput[2]
 
-def updateOLED(controllerOutput):
-    display.fill(0)
-    display.text('Speeds: '+ (controllerOutput[1]), 40, 0, 1)
-    display.text('Directions: '+ (controllerOutput[0]), 40, 0, 1)
-    display.show()
+async def updateOLED():
+    while True:
+        if not connected:
+            display.fill(0)
+            display.text('Humles Joystick', 0, 0, 1)
+            display.text('Ikke forbundet', 0, 12, 1)
+            display.show()
+            await asyncio.sleep_ms(1000)
+            continue
+        display.fill(0)
+        display.text('Speeds: '+ str(data[comms.indexSpeedLeftLittle]+data[comms.indexSpeedLeftBig]*256) + ' ' + str(data[comms.indexSpeedRightLittle]+data[comms.indexSpeedRightBig]*256), 0, 0, 1)
+        display.text('Directions: '+ str(data[comms.indexMotorLeftDirection]-1) + ' ' + str(data[comms.indexMotorRightDirection]-1), 0, 12, 1)
+        #display.text('Speeds: '+ str(data[]), 40, 0, 1)
+        #display.text('Directions: '+ str(data[comms.indexMotorLeftDirection]), 40, 0, 1)
+        display.show()
+        await asyncio.sleep_ms(1000)
 
 
 
@@ -147,6 +162,7 @@ async def main():
         asyncio.create_task(peripheral_task()),
         asyncio.create_task(remote_task()),
         asyncio.create_task(blink_task()),
+        asyncio.create_task(updateOLED())
     ]
     await asyncio.gather(*tasks)  # type: ignore
 
