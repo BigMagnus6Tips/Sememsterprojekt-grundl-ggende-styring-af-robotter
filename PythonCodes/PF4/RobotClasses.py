@@ -337,13 +337,12 @@ class DifferentialDriver():
         else:
             await self.multiStepper.move([0, steps])
         
-class JoystickController:
 
+class JoystickController:
 
     def __init__(self, pin1, pin2):
         self.xAxis = ADC(Pin(pin1))
         self.yAxis = ADC(Pin(pin2))
-        self.speed = 100
     
     def addButton(self, pin):
         self.button = Pin(pin, Pin.IN, Pin.PULL_UP)
@@ -358,20 +357,20 @@ class JoystickController:
         yAxisNorm = -((yAxisValue - 32768) / 32768)
         
         
-        xAxisNorm = round(xAxisNorm*self.speed)
-        yAxisNorm = round(yAxisNorm*self.speed)
+        xAxisNorm = round(xAxisNorm*400)
+        yAxisNorm = round(yAxisNorm*400)
 
         # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
         #if yAxisNorm > 0.2 and xAxisNorm > 0.2:
             #await self.multiStepper.move([-1, -1])
         deadZone = 0.1
-        if yAxisNorm > deadZone*self.speed:
-            return [[1, 1],[yAxisNorm, yAxisNorm],self.button.value()]
-        elif yAxisNorm < -deadZone*self.speed:
+        if yAxisNorm > deadZone*400:
             return [[-1, -1],[yAxisNorm, yAxisNorm],self.button.value()]
-        elif xAxisNorm < -deadZone*self.speed:
+        elif yAxisNorm < -deadZone*400:
+            return [[1, 1],[yAxisNorm, yAxisNorm],self.button.value()]
+        elif xAxisNorm < -deadZone*400:
             return [[1, -1],[xAxisNorm, xAxisNorm],self.button.value()]
-        elif xAxisNorm > deadZone*self.speed:
+        elif xAxisNorm > deadZone*400:
             return [[-1, 1],[xAxisNorm, xAxisNorm],self.button.value()]
         else:
             return [[0, 0],[0, 0],self.button.value()]

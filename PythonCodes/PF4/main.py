@@ -10,11 +10,12 @@ import aioble
 
 async def monitorStart():
     global shouldMonitor
+    global killSwitch
     with open("without_shield_with_LED2.csv", "w") as file: # w is for write, which overwrites the file if it already exists
         file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
         current_time = 0
 
-        while shouldMonitor:
+        while shouldMonitor and not killSwitch:
             # Read raw ADC value (12-bit range: 0 to 4095)
             adc_value = adc_pin.read_u16()  # This returns 16-bit value (0-65535)
             
@@ -74,7 +75,8 @@ async def peripheral_task():
         print("Connected")
         connected = True
         alive = True
-        while True and alive:
+        global killSwitch
+        while not killSwitch and alive:
             try:
                 robot_service = await connection.service(_REMOTE_UUID)
                 print(robot_service)
@@ -83,7 +85,7 @@ async def peripheral_task():
             except uasyncio.TimeoutError:
                 print("Timeout discovering services/characteristics")
                 return
-            while not KillSwitch:
+            while not killSwitch:
                 if control_characteristic != None:
                     try:
                         data = await control_characteristic.read()
@@ -97,8 +99,7 @@ async def peripheral_task():
                                 print("Button pressed")
                                 connected = False
                                 alive = False
-                                global KillSwitch
-                                KillSwitch = True
+                                killSwitch = True
                                 return
                         
                     except TypeError:
@@ -122,7 +123,8 @@ async def peripheral_task():
 
 async def moveFromControllerData():
     print( "MoveFromControllerData")
-    while not KillSwitch:
+    global killSwitch
+    while not killSwitch:
         if 0 not in dataFromController[0]:
             multiStepper.set_Speed(dataFromController[0])
             await multiStepper.move(dataFromController[1])
@@ -134,13 +136,14 @@ async def moveFromControllerData():
     
 
 
-# KillSwitch function
+# killSwitch function
 def interruption_handler(pin):
-    global KillSwitch
-    KillSwitch = True
+    global killSwitch
+    killSwitch = True
 
 async def blinkLed():
-    while not KillSwitch:
+    global killSwitch
+    while not killSwitch:
         onBoardLed.toggle()
         await uasyncio.sleep(0.5)
 
@@ -159,8 +162,8 @@ async def start():
     # await car.inPlaceRotation(180)
     shouldMonitor = False # Then the program stops monitoring.
 
-    global KillSwitch
-    while not KillSwitch:
+    global killSwitch
+    while not killSwitch:
         await uasyncio.sleep(0.1)
     
 
@@ -209,14 +212,18 @@ if __name__ == '__main__':
     dataFromController = [[0,0], [0,0], 1]
 
 
-    # First KillSwitch is set to False, but if the button connected to pin 22 is pressed it is set to True and interrupts the program.
-    KillSwitch = False
-    KillSwitchButton = Pin(22, Pin.IN, Pin.PULL_UP)
-    #KillSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
+    # First killSwitch is set to False, but if the button connected to pin 22 is pressed it is set to True and interrupts the program.
+    killSwitch = False
+    killSwitchButton = Pin(22, Pin.IN, Pin.PULL_UP)
+    #killSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
     
+    print("WTF")
+    print("IDK")
     try:
+        print("SHOUDL START")
         uasyncio.run(start())
     except KeyboardInterrupt:
         sleep(1)
         multiStepper.stop()
         print("Program stopped by user")
+print("Program done")

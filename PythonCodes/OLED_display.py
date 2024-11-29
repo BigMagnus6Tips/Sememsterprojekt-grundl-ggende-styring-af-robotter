@@ -1,5 +1,5 @@
 from machine import I2C, Pin
-import ssd1306_OLED as ssd1306  # Import the SSD1306 driver
+import PythonCodes.ssd1306_OLED as ssd1306  # Import the SSD1306 driver
 
 # Initialize I2C with correct pins (SCL and SDA)
 i2c = I2C(0, scl=Pin(13), sda=Pin(12))  # Replace with your correct pins

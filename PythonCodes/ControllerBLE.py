@@ -7,7 +7,7 @@ import uasyncio as asyncio
 from micropython import const
 from RobotClasses import JoystickController
 from WifiClasses import ConstantsForCommunication as comms
-import ssd1306_OLED
+import PythonCodes.ssd1306_OLED as ssd1306_OLED
 def uid():
     """ Return the unique id of the device as a string """
     return "{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}".format(
