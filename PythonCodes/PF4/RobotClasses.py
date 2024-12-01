@@ -340,9 +340,11 @@ class DifferentialDriver():
 
 class JoystickController:
 
-    def __init__(self, pin1, pin2):
+    # We use a scaling factor of 400 because there are 400 steps in one revolution when using half steps
+    def __init__(self, pin1, pin2, scalingFactor = 400):
         self.xAxis = ADC(Pin(pin1))
         self.yAxis = ADC(Pin(pin2))
+        self.scalingFactor = scalingFactor
     
     def addButton(self, pin):
         self.button = Pin(pin, Pin.IN, Pin.PULL_UP)
@@ -356,21 +358,20 @@ class JoystickController:
         xAxisNorm = -((xAxisValue - 32768) / 32768)
         yAxisNorm = -((yAxisValue - 32768) / 32768)
         
-        
-        xAxisNorm = round(xAxisNorm*400)
-        yAxisNorm = round(yAxisNorm*400)
+        # We multiply by 400 because there are 400 steps in the full range of the joystick
+        # However after testing, the robot can't physically complete a full revolition in one second.
+        # So the number 400 is pretty arbitary.
+        xAxisNorm = round(xAxisNorm * self.scalingFactor)
+        yAxisNorm = round(yAxisNorm * self.scalingFactor)
 
-        # Næste gang skal vi ændre speed, sådan at den kan køre diagonalt, dette kan vi ikke fordi vi kun kan definere speed for enten x eller y.
-        #if yAxisNorm > 0.2 and xAxisNorm > 0.2:
-            #await self.multiStepper.move([-1, -1])
-        deadZone = 0.1
-        if yAxisNorm > deadZone*400:
+        deadZone = 0.1 * self.scalingFactor
+        if yAxisNorm > deadZone:
             return [[-1, -1],[yAxisNorm, yAxisNorm],self.button.value()]
-        elif yAxisNorm < -deadZone*400:
+        elif yAxisNorm < -deadZone:
             return [[1, 1],[yAxisNorm, yAxisNorm],self.button.value()]
-        elif xAxisNorm < -deadZone*400:
+        elif xAxisNorm < -deadZone:
             return [[1, -1],[xAxisNorm, xAxisNorm],self.button.value()]
-        elif xAxisNorm > deadZone*400:
+        elif xAxisNorm > deadZone:
             return [[-1, 1],[xAxisNorm, xAxisNorm],self.button.value()]
         else:
             return [[0, 0],[0, 0],self.button.value()]
