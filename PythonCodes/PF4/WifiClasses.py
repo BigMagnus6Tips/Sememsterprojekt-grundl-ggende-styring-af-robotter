@@ -2,8 +2,10 @@ import network
 import socket
 import time
 
+
+
 class ConstantsForCommunication:
-    #Indexes 
+    #Indexes for communcation
     indexSpeedLeftBig = 0
     indexSpeedLeftLittle = 1
     indexSpeedRightBig = 2
@@ -12,6 +14,8 @@ class ConstantsForCommunication:
     indexMotorRightDirection = 5
     indexButton = 6
     
+
+
 
 
 class WifiSTA:

@@ -1,5 +1,4 @@
 import sys
-
 import aioble
 import bluetooth
 import machine
@@ -8,23 +7,34 @@ from micropython import const
 from RobotClasses import JoystickController
 from WifiClasses import ConstantsForCommunication as comms
 import ssd1306_OLED as ssd1306_OLED
+
+
 def uid():
     """ Return the unique id of the device as a string """
     return "{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}".format(
         *machine.unique_id())
 
+
+# Bluetooth UUIDS can be found online at https://www.bluetooth.com/specifications/gatt/services/
 MANUFACTURER_ID = const(0x02A29)
 MODEL_NUMBER_ID = const(0x2A24)
 SERIAL_NUMBER_ID = const(0x2A25)
 HARDWARE_REVISION_ID = const(0x2A26)
 BLE_VERSION_ID = const(0x2A28)
 
+#Makes a JoystickController object with the pins for the joystick
 joystickController = JoystickController("GP27", "GP28")
+
+#sets the format of the data to be sent to the robot
 data = [0, 0, 0, 0, 0, 0, 0]
+
+#Adds the button to the joystickController object
 joystickController.addButton("GP22")
+
+#Sets up the leds
 leds = [machine.Pin("GP9", machine.Pin.OUT), machine.Pin("GP8", machine.Pin.OUT), machine.Pin("GP7", machine.Pin.OUT), machine.Pin("GP6", machine.Pin.OUT)]
 
-
+#Sets up the OLED display
 OLEDI2C = machine.I2C(0, scl=machine.Pin(13), sda=machine.Pin(12))
 display = ssd1306_OLED.SSD1306_I2C(128, 64, OLEDI2C)
 display.fill(0)
@@ -32,15 +42,19 @@ display.rotate(0)
 display.text('Humles Joystick', 0, 0, 1)
 display.show()
 
-_DEVICE_INFO_UUID = bluetooth.UUID(0x180A) # Device Information
+
+#Information for the bluetooth connection UUIDs
+_DEVICE_INFO_UUID = bluetooth.UUID(0x180A) 
 _GENERIC = bluetooth.UUID(0x1848)
 _JOYSTICK_UUID = bluetooth.UUID(0x2A78)
 _ROBOT = bluetooth.UUID(0x1878)
                               
 _BLE_APPEARANCE_GENERIC_REMOTE_CONTROL = const(384)
 
+# Advertisement interval in milliseconds
 ADV_INTERVAL_MS = 250_000
 
+# Create Service for device info
 device_info = aioble.Service(_DEVICE_INFO_UUID)
                               
 connection = None
@@ -52,20 +66,25 @@ aioble.Characteristic(device_info, bluetooth.UUID(SERIAL_NUMBER_ID), read=True, 
 aioble.Characteristic(device_info, bluetooth.UUID(HARDWARE_REVISION_ID), read=True, initial=sys.version)
 aioble.Characteristic(device_info, bluetooth.UUID(BLE_VERSION_ID), read=True, initial="1.0")
 
+# Create Service for remote control
 remote_service = aioble.Service(_GENERIC)
 
+# Create Characteristic for remote control
 joystick_characteristic = aioble.Characteristic(
     remote_service, _JOYSTICK_UUID, read=True, notify=True)
 
 print("Registering services")
 
+# Register services
 aioble.register_services(remote_service, device_info)
 
 connected = False
 
+# Function to update the data to be sent to the robot
 def updateData():
     controllerOutput = joystickController.readMovements()
-    #print(controllerOutput)
+    
+    #Fits the output of the joystick controller to the format of the data to be sent to the robot
     data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0])//256
     data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0])%256
     
@@ -77,8 +96,11 @@ def updateData():
 
     data[comms.indexButton] = controllerOutput[2]
 
+
+#Function to update the OLED display
 async def updateOLED():
     while True:
+        #Hvis der ikke er nogen forbindelse
         if not connected:
             display.fill(0)
             display.text('Humles Joystick', 0, 0, 1)
@@ -86,18 +108,17 @@ async def updateOLED():
             display.show()
             await asyncio.sleep_ms(1000)
             continue
+        #If there is a connection
         display.fill(0)
         display.text('Speeds: '+ str(data[comms.indexSpeedLeftLittle]+data[comms.indexSpeedLeftBig]*256) + ' ' + str(data[comms.indexSpeedRightLittle]+data[comms.indexSpeedRightBig]*256), 0, 0, 1)
         display.text('Directions: '+ str(data[comms.indexMotorLeftDirection]-1) + ' ' + str(data[comms.indexMotorRightDirection]-1), 0, 12, 1)
-        #display.text('Speeds: '+ str(data[]), 40, 0, 1)
-        #display.text('Directions: '+ str(data[comms.indexMotorLeftDirection]), 40, 0, 1)
         display.show()
         await asyncio.sleep_ms(1000)
 
 
 
 
-async def remote_task():
+async def remote_task():#
     """ Task to handle remote control """
     
     while True:
@@ -109,54 +130,38 @@ async def remote_task():
         print("Data: ", data)
         joystick_characteristic.write(bytes(data))
         joystick_characteristic.notify(connection, b"x")
-        """if button_a.read():
-            print(f"Button A pressed, connection is: {connection}")
-            joystick_characteristic.write(b"a")
-            joystick_characteristic.notify(connection, b"a")
-        elif button_b.read():
-            print(f"Button B pressed, connection is: {connection}")
-            joystick_characteristic.write(b"b")
-            joystick_characteristic.notify(connection, b"b")
-        elif button_x.read():
-            print(f"Button X pressed, connection is: {connection}")
-            joystick_characteristic.write(b"x")
-            joystick_characteristic.notify(connection, b"x")
-        elif button_y.read():
-            print(f"Button Y pressed, connection is: {connection}")
-            joystick_characteristic.write(b"y")
-            joystick_characteristic.notify(connection, b"y")
-        else:
-            joystick_characteristic.write(b"!")
-#             button_characteristic.notify(connection, b"!")"""
         await asyncio.sleep_ms(10)
+
 
 async def peripheral_task():
     """ Task to handle peripheral """
     global connected, connection
     while True:
         connected = False
+        # Start advertising
         async with await aioble.advertise(
             ADV_INTERVAL_MS,
             name="Humles Joystick",
             appearance=_BLE_APPEARANCE_GENERIC_REMOTE_CONTROL,
             services=[_ROBOT]
         ) as connection: # type: ignore
+            #When a connection is made
             print("Connection from, ", connection.device)
             connected = True
             print("connected {connected}")
             leds[1].value(1)
+            #wait for disconnection
             await connection.disconnected()
             print("disconnected")
             leds[1].value(0)
 
+
+# Blink the LED
 async def blink_task():
-    
     leds[0].value(1)
-
-    
-
     await asyncio.sleep_ms(500)
 
+# Main function to run the tasks
 async def main():
     tasks = [
         asyncio.create_task(peripheral_task()),
@@ -166,4 +171,5 @@ async def main():
     ]
     await asyncio.gather(*tasks)  # type: ignore
 
+# Run the main function with asyncio
 asyncio.run(main())

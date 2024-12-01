@@ -2,7 +2,7 @@ from machine import Pin, Timer, PWM, ADC
 import uasyncio
 import math
 from time import sleep
-#test2
+
 class StepperMotor:
     
     # Define the step seqeunce for a full step
