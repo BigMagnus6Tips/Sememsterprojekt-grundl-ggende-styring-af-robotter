@@ -55,14 +55,14 @@ async def peripheral_task():
     global dataFromController
     global connected
     connected = False
-    #wait for connection
+    # wait for connection
     device = await find_remote()
     if not device:
         print("Robot Remote not found")
         return
     try:
         print("Connecting to", device)
-        #Tries connection to the controller
+        # Tries connection to the controller
         connection = await device.connect()
         
     except uasyncio.TimeoutError:
@@ -75,10 +75,10 @@ async def peripheral_task():
         connected = True
         alive = True
         global killSwitch
-        #While the killeswitch has not been pressed and the remote is still connected
+        # While the killeswitch has not been pressed and the remote is still connected
         while not killSwitch and alive:
             try:
-                #Tries to find the service and characteristic of the remote
+                # Tries to find the service and characteristic of the remote
                 robot_service = await connection.service(_REMOTE_UUID)
                 print(robot_service)
                 control_characteristic = await robot_service.characteristic(_REMOTE_CHARACTERISTICS_UUID)
@@ -87,16 +87,16 @@ async def peripheral_task():
                 print("Timeout discovering services/characteristics")
                 return
             
-            #The main loop of the function to read data from the controller
+            # The main loop of the function to read data from the controller
             while not killSwitch:
                 if control_characteristic != None:
                     try:
-                        #Reads the data from the controller
+                        # Reads the data from the controller
                         data = await control_characteristic.read()
                         # Makes the data of bytes into a list
                         listData = list(data)
                         if len(listData) != 0:
-                            #Converts the Data bytes into a list of list of intergers in the correct format needed
+                            # Converts the Data bytes into a list of list of intergers in the correct format needed
                             dataFromController = [[listData[comms.indexSpeedLeftBig]*256+listData[comms.indexSpeedLeftLittle], 
                                                 listData[comms.indexSpeedRightBig]*256+listData[comms.indexSpeedRightLittle]], 
                                                 [listData[comms.indexMotorLeftDirection]-1, listData[comms.indexMotorRightDirection]-1],
@@ -133,7 +133,7 @@ async def moveFromControllerData():
     print( "MoveFromControllerData")
     global killSwitch
     while not killSwitch:
-        #Checks if the speed for the motors is not 0 because then the delay would be infinite and calculated by 1/speed 
+        # Checks if the speed for the motors is not 0 because then the delay would be infinite and calculated by 1/speed 
         # Whick would be 1/0 = infinite
         if 0 not in dataFromController[0]:
             multiStepper.set_Speed(dataFromController[0])
@@ -156,10 +156,10 @@ async def blinkLed():
 async def start():
     global shouldMonitor
     shouldMonitor = False
-    #uasyncio.create_task(monitorStart())
+    # uasyncio.create_task(monitorStart())
     uasyncio.create_task(peripheral_task())
     uasyncio.create_task(moveFromControllerData())
-    #uasyncio.create_task(blinkLed())
+    # uasyncio.create_task(blinkLed())
     global killSwitch
     while not killSwitch:
         await uasyncio.sleep(0.1)
@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
 
 
-    #Adc pin for moonitoring the LDR
+    # Adc pin for moonitoring the LDR
     adc_pin = ADC(Pin(26))  # GP26 is labeled as ADC0 on Pico found in the Kicad drawing
 
     # Reference voltage for the Pico W
@@ -198,14 +198,14 @@ if __name__ == '__main__':
     motorLeft = StepperMotor([4,5,6,7], 0.2, 18000, StepperMotor.half_step)
 
 
-    # makes multistepper object with the motors
+    # Makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
 
-    # set their delays
+    # Set their delays
     multiStepper.set_Delays([0.01,0.01])
 
 
-    # makes a differentialDriver object
+    # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
 
     dataFromController = [[0,0], [0,0], 1]
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     # First killSwitch is set to False, but if the button connected to pin 22 is pressed it is set to True and interrupts the program.
     killSwitch = False
     killSwitchButton = Pin(22, Pin.IN, Pin.PULL_UP)
-    #killSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
+    # killSwitchButton.irq(trigger=Pin.IRQ_FALLING, handler=interruption_handler)
     try:
         uasyncio.run(start())
     except KeyboardInterrupt:

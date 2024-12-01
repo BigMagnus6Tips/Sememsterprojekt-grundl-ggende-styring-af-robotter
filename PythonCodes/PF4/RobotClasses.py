@@ -200,12 +200,12 @@ class MultiStepper():
 
     # Function to set delays for my stepperMotors
     def set_Delays(self, delays):
-        # checks if the lenght is the same as the steppermotors in the multistepper class
+        # Checks if the lenght is the same as the steppermotors in the multistepper class
         if len(delays) != len(self.stepperMotors):
             print("must input a list of same size as stepperMotors")
             return 0
         
-        # sets the delays
+        # Sets the delays
         for i in range(len(self.stepperMotors)):
             self.stepperMotors[i].set_Delay(delays[i])
     
@@ -216,7 +216,7 @@ class MultiStepper():
             return 0       
         
         
-        # again chekcs the lenght of the speeds given
+        # Again chekcs the lenght of the speeds given
         if len(speeds) != len(self.stepperMotors):
             print("must input a list of same size as stepperMotors")
             return 0
@@ -248,12 +248,12 @@ class MultiStepper():
         await uasyncio.gather(*tasks) # type: ignore
 
 
-    # function to stop all motors
+    # Function to stop all motors
     def stop(self):
         for motor in self.stepperMotors:
             motor.stop()
     
-    # function to get modes of the stepper motors
+    # Function to get modes of the stepper motors
     def getModes(self):
         return [stepperMotor.mode for stepperMotor in self.stepperMotors]
 
@@ -267,14 +267,14 @@ class DifferentialDriver():
     def __init__(self, multiStepper):
         self.multiStepper = multiStepper
     
-    # steps to calculate steps for a given distance in 
+    # Steps to calculate steps for a given distance in 
     def distanceToSteps(self, distanceCm, mode):
-        # the measuered diameter of the wheels
+        # The measuered diameter of the wheels
         diameter = 8.7
-        # calculates the circumference
+        # Calculates the circumference
         circumference = diameter*math.pi
         
-        # checks which mode the stepperMode is set to and calculates how many steps it needs
+        # Checks which mode the stepperMode is set to and calculates how many steps it needs
         stepsToGo = 0
         if mode == StepperMotor.full_step:
            stepsToGo = 200*distanceCm/circumference
@@ -283,22 +283,22 @@ class DifferentialDriver():
         elif mode == StepperMotor.micro_step:
            stepsToGo = 200*len(StepperMotor.micro_step_sequence)*distanceCm/(circumference*4)
             
-        # rounds the steps to go
+        # Rounds the steps to go
         return round(stepsToGo)
     
     
-    # function to go forward and backwards by making steps variable negative
+    # Function to go forward and backwards by making steps variable negative
     async def goForward(self, steps):
         # calls the move function for multistepper with steps
         await self.multiStepper.move([steps, steps])
     
-    # function to go forward a given distance
+    # Function to go forward a given distance
     async def goForwardGivenDistance(self, distanceCm):
-        # gets the steps for each motor taking into account the mode
+        # Gets the steps for each motor taking into account the mode
         steps0 = self.distanceToSteps(distanceCm, self.multiStepper.getModes()[0])
         steps1 = self.distanceToSteps(distanceCm, self.multiStepper.getModes()[1])
         
-        # calls the move function for multistepper with steps
+        # Calls the move function for multistepper with steps
         await self.multiStepper.move([steps0, steps1])
     
     # Function to calculates steps to turn given amount of degrees
@@ -314,10 +314,10 @@ class DifferentialDriver():
         elif mode == StepperMotor.micro_step:
            stepsToGo = fullStepsForFullRotation*len(StepperMotor.micro_step_sequence)/4
         
-        # rounds the steps to go
+        # Rounds the steps to go
         return round(stepsToGo)
     
-    # function for rotating on place in both ways depending on if steps is negative og positiv
+    # Function for rotating on place in both ways depending on if steps is negative og positiv
     async def inPlaceRotation(self, degree):
         print("inPlaceRotation")
         # Calculates the steps each motor has to take to turn given the degrees
@@ -329,9 +329,9 @@ class DifferentialDriver():
         # Moves the different motors 2 different ways
         await self.multiStepper.move([steps0, -steps1])
     
-    # function to make a turn
+    # Function to make a turn
     async def turn(self, steps, direction):
-        # chekcs if direction is positive or not and moves 1 of the motors depending on that
+        # Checks if direction is positive or not and moves 1 of the motors depending on that
         if direction:
             await self.multiStepper.move([steps, 0])
         else:
@@ -358,9 +358,7 @@ class JoystickController:
         xAxisNorm = -((xAxisValue - 32768) / 32768)
         yAxisNorm = -((yAxisValue - 32768) / 32768)
         
-        # We multiply by 400 because there are 400 steps in the full range of the joystick
-        # However after testing, the robot can't physically complete a full revolition in one second.
-        # So the number 400 is pretty arbitary.
+        # We multiply by the scaling factor to get a number that is more reasonable to work with
         xAxisNorm = round(xAxisNorm * self.scalingFactor)
         yAxisNorm = round(yAxisNorm * self.scalingFactor)
 

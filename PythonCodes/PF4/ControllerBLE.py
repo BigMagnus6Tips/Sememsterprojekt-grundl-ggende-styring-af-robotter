@@ -22,19 +22,19 @@ SERIAL_NUMBER_ID = const(0x2A25)
 HARDWARE_REVISION_ID = const(0x2A26)
 BLE_VERSION_ID = const(0x2A28)
 
-#Makes a JoystickController object with the pins for the joystick
+# Makes a JoystickController object with the pins for the joystick
 joystickController = JoystickController("GP27", "GP28")
 
-#sets the format of the data to be sent to the robot
+# sets the format of the data to be sent to the robot
 data = [0, 0, 0, 0, 0, 0, 0]
 
-#Adds the button to the joystickController object
+# Adds the button to the joystickController object
 joystickController.addButton("GP22")
 
-#Sets up the leds
+# Sets up the leds
 leds = [machine.Pin("GP9", machine.Pin.OUT), machine.Pin("GP8", machine.Pin.OUT), machine.Pin("GP7", machine.Pin.OUT), machine.Pin("GP6", machine.Pin.OUT)]
 
-#Sets up the OLED display
+# Sets up the OLED display
 OLEDI2C = machine.I2C(0, scl=machine.Pin(13), sda=machine.Pin(12))
 display = ssd1306_OLED.SSD1306_I2C(128, 64, OLEDI2C)
 display.fill(0)
@@ -43,7 +43,7 @@ display.text('Humles Joystick', 0, 0, 1)
 display.show()
 
 
-#Information for the bluetooth connection UUIDs
+# Information for the bluetooth connection UUIDs
 _DEVICE_INFO_UUID = bluetooth.UUID(0x180A) 
 _GENERIC = bluetooth.UUID(0x1848)
 _JOYSTICK_UUID = bluetooth.UUID(0x2A78)
@@ -84,7 +84,7 @@ connected = False
 def updateData():
     controllerOutput = joystickController.readMovements()
     
-    #Fits the output of the joystick controller to the format of the data to be sent to the robot
+    # Fits the output of the joystick controller to the format of the data to be sent to the robot
     data[comms.indexSpeedLeftBig] = abs(controllerOutput[1][0])//256
     data[comms.indexSpeedLeftLittle] = abs(controllerOutput[1][0])%256
     
@@ -97,10 +97,10 @@ def updateData():
     data[comms.indexButton] = controllerOutput[2]
 
 
-#Function to update the OLED display
+# Function to update the OLED display
 async def updateOLED():
     while True:
-        #Hvis der ikke er nogen forbindelse
+        # If there is no connection
         if not connected:
             display.fill(0)
             display.text('Humles Joystick', 0, 0, 1)
@@ -108,7 +108,7 @@ async def updateOLED():
             display.show()
             await asyncio.sleep_ms(1000)
             continue
-        #If there is a connection
+        # If there is a connection
         display.fill(0)
         display.text('Speeds: '+ str(data[comms.indexSpeedLeftLittle]+data[comms.indexSpeedLeftBig]*256) + ' ' + str(data[comms.indexSpeedRightLittle]+data[comms.indexSpeedRightBig]*256), 0, 0, 1)
         display.text('Directions: '+ str(data[comms.indexMotorLeftDirection]-1) + ' ' + str(data[comms.indexMotorRightDirection]-1), 0, 12, 1)
@@ -145,12 +145,12 @@ async def peripheral_task():
             appearance=_BLE_APPEARANCE_GENERIC_REMOTE_CONTROL,
             services=[_ROBOT]
         ) as connection: # type: ignore
-            #When a connection is made
+            # When a connection is made
             print("Connection from, ", connection.device)
             connected = True
             print("connected {connected}")
             leds[1].value(1)
-            #wait for disconnection
+            # wait for disconnection
             await connection.disconnected()
             print("disconnected")
             leds[1].value(0)
