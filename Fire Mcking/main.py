@@ -2,10 +2,7 @@ from machine import Pin, Timer, PWM, ADC
 from time import sleep
 import uasyncio
 import math
-from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, JoystickController
-import bluetooth
-from WifiClasses import ConstantsForCommunication as comms
-import aioble
+from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver
 
 
 async def monitorStart():
