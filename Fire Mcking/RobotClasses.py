@@ -1,3 +1,5 @@
+# We have chosen just to keep everything in the RobotClasses file, even though we don't use all of it for Fire Mcking.
+# The file is just here to be able to import it in the main.py file.
 from machine import Pin, Timer, PWM, ADC
 import uasyncio
 import math
@@ -89,7 +91,6 @@ class StepperMotor:
         self.pwm_pct = pwm_pct
         pwm_max = 65535
         self.pwm_val = int(pwm_max * self.pwm_pct)
-        print(self.pwm_val)
         
         # sets the step count to 0 to keep track of steps
         self.step_count = 0
@@ -108,6 +109,7 @@ class StepperMotor:
             print(f"! Delay limit ! (delay set to {self.delay} instead)")
         else:
             self.delay = delay
+            print(self.delay)
 
     
     # function to set the PWM percantage
@@ -336,4 +338,41 @@ class DifferentialDriver():
             await self.multiStepper.move([steps, 0])
         else:
             await self.multiStepper.move([0, steps])
+        
+
+class JoystickController:
+
+    # We use a scaling factor of 400 because there are 400 steps in one revolution when using half steps
+    def __init__(self, pin1, pin2, scalingFactor = 400):
+        self.xAxis = ADC(Pin(pin1))
+        self.yAxis = ADC(Pin(pin2))
+        self.scalingFactor = scalingFactor
+    
+    def addButton(self, pin):
+        self.button = Pin(pin, Pin.IN, Pin.PULL_UP)
+    
+    def readMovements(self):
+        print(self.button.value())
+        xAxisValue = self.xAxis.read_u16()
+        yAxisValue = self.yAxis.read_u16()
+        # So in order to have 0,0 in the middle of the joystick, we need to subtract 32768 from the value
+        # And in order to have a range from -1 to 1, we need to divide by 32768
+        xAxisNorm = -((xAxisValue - 32768) / 32768)
+        yAxisNorm = -((yAxisValue - 32768) / 32768)
+        
+        # We multiply by the scaling factor to get a number that is more reasonable to work with
+        xAxisNorm = round(xAxisNorm * self.scalingFactor)
+        yAxisNorm = round(yAxisNorm * self.scalingFactor)
+
+        deadZone = 0.1 * self.scalingFactor
+        if yAxisNorm > deadZone:
+            return [[-1, -1],[yAxisNorm, yAxisNorm],self.button.value()]
+        elif yAxisNorm < -deadZone:
+            return [[1, 1],[yAxisNorm, yAxisNorm],self.button.value()]
+        elif xAxisNorm < -deadZone:
+            return [[1, -1],[xAxisNorm, xAxisNorm],self.button.value()]
+        elif xAxisNorm > deadZone:
+            return [[-1, 1],[xAxisNorm, xAxisNorm],self.button.value()]
+        else:
+            return [[0, 0],[0, 0],self.button.value()]
 
