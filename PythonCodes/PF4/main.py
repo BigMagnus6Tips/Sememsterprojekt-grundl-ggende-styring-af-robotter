@@ -220,7 +220,7 @@ if __name__ == '__main__':
     print("WTF")
     print("IDK")
     try:
-        print("SHOUDL START")
+        print("SHOULD START")
         uasyncio.run(start())
     except KeyboardInterrupt:
         sleep(1)
