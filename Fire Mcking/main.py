@@ -64,7 +64,7 @@ async def start():
         await multiStepper.move([i*speedSteps*timeForEachResolution,i*speedSteps*timeForEachResolution])
     print("Done")
     while True:
-        await multiStepper.move([-1000,1000])
+        await multiStepper.move([1000,1000])
 
 
 
