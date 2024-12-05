@@ -10,7 +10,7 @@ THRESHOLD = 1.2
 
 
 path = "Dataplotting/"
-fileNames = ["without_shield_with_LED1.csv", "data_log_finalTest.csv"]
+fileNames = ["FinalTestWithoutShield1.csv"]
 colors = ["blue", "orange", "green", "red", "purple"]
 
 for i in range(len(fileNames)):
