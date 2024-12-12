@@ -52,7 +52,7 @@ async def start():
     shouldMonitor = False
     # uasyncio.create_task(monitorStart())
     uasyncio.create_task(blinkLed())
-    maxSpeed = 800 # 600 er limit for koden ca.
+    maxSpeed = 800 # 600 er limit for koden ca. ved 20 % PWM
     resolution = 10
     timeToMaxSpeed = 1
     timeForEachResolution = timeToMaxSpeed/resolution
@@ -64,7 +64,7 @@ async def start():
         await multiStepper.move([i*speedSteps*timeForEachResolution,i*speedSteps*timeForEachResolution])
     print("Done")
     while True:
-        await multiStepper.move([-1000,1000])
+        await multiStepper.move([1000,1000])
 
 
 

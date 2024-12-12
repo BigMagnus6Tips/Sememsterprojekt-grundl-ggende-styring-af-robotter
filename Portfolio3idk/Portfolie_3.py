@@ -332,7 +332,7 @@ class DifferentialDriver():
 
 async def monitorStart():
     global shouldMonitor
-    with open("FinalTestWithoutShield1.csv", "w") as file: # w is for write, which overwrites the file if it already exists
+    with open("FinalTestWithoutLEDButShield.csv", "w") as file: # w is for write, which overwrites the file if it already exists
         file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
         current_time = 0
 

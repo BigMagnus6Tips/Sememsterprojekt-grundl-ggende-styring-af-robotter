@@ -6,11 +6,11 @@ import csv
 plt.figure(figsize=(10, 5))
 
 # Plot Voltage over Time
-THRESHOLD = 1.2
+THRESHOLD = 0.75
 
 
 path = "Dataplotting/"
-fileNames = ["without_shield_with_LED1.csv", "data_log_finalTest.csv"]
+fileNames = ["FinalTestWithoutShield1.csv", "FinalTestWithLED.csv","FinalTestWithLEDAndShield.csv","FinalTestWithoutLEDButShield.csv"]
 colors = ["blue", "orange", "green", "red", "purple"]
 
 for i in range(len(fileNames)):
@@ -32,23 +32,30 @@ for i in range(len(fileNames)):
             
     
     plt.subplot(2, 1, 1)
-    plt.plot(time_data, voltage_data, label="Voltage (V)", color=colors[i])
-    
+    plt.plot(time_data, voltage_data, label=fileNames[i], color=colors[i])
+
     # Plot Resistance over Time
     plt.subplot(2, 1, 2)
-    plt.plot(time_data, resistance_data, label="Resistance (Ohm)", color=colors[i])       
-    
-plt.subplot(2, 1, 2)
-#plt.plot([0,time_data[-1]], [THRESHOLD,THRESHOLD], linestyle="--", color="red", label="Threshold")'
+    plt.plot(time_data, resistance_data, label=fileNames[i], color=colors[i])       
+
+
+
+plt.subplot(2, 1, 1)
+plt.plot([0,time_data[-1]], [THRESHOLD,THRESHOLD], linestyle="--", color="red", label="Threshold")
+
 plt.xlabel("Time (s)")
 plt.ylabel("Voltage (V)")
-plt.title("Voltage and Resistance over Time")
+plt.title("Voltage over Time")
 plt.legend()
 plt.grid()
 
 
+
+
+plt.subplot(2, 1, 2)
 plt.xlabel("Time (s)")
-plt.ylabel("Resistance (Ohm)")
+plt.ylabel("Resistance (ohm)")
+plt.title("Resistance over Time")
 plt.legend()
 plt.grid()
 
