@@ -13,7 +13,7 @@ R2 = 2200  # Known resistor value in the voltage divider circuit. We chose this 
 
 async def monitorStart():
     global shouldMonitor
-    with open("without_shield_with_LED2.csv", "w") as file: # w is for write, which overwrites the file if it already exists
+    with open("log.csv", "w") as file: # w is for write, which overwrites the file if it already exists
         file.write("Time (s), Voltage (V), Resistance (Ohm)\n")
         current_time = 0
 
