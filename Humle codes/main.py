@@ -4,7 +4,7 @@ import uasyncio as asyncio
 from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, deadReckoningHandler
 
 
-
+knownLinePositions = []
 
 async def start():
     #await car.goForward(-568)

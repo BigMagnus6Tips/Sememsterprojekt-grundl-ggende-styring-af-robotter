@@ -46,10 +46,12 @@ async def monitorStart():
 
 def turnBlackOn():
     global onBlack
+    print("On black")
     onBlack = True
     
 def turnBlackOff():
     global onBlack
+    print("On white")
     onBlack = False
 
 
@@ -81,10 +83,12 @@ async def start():
     while True:
         if onBlack:
             multiStepper.set_Speed([maxSpeed*leftMotorSpeed/rightMotorSpeed, maxSpeed])
+            print("now moving")
             await multiStepper.move([leftMotorSpeed,rightMotorSpeed])
         else:
             multiStepper.set_Speed([maxSpeed, maxSpeed])
             await multiStepper.move([10,10])
+            print("turning")
     
     
     """    
@@ -122,8 +126,8 @@ if __name__ == '__main__':
 
     ldrPin = Pin(22, Pin.IN, Pin.PULL_DOWN)
 
-    ldrPin.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOn)
-    ldrPin.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOff)
+    #ldrPin.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOn)
+    #ldrPin.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOff)
 
     # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
