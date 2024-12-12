@@ -303,7 +303,7 @@ class DifferentialDriver():
     
     # Function to calculates steps to turn given amount of degrees
     def inPlaceRotationStepsToDegree(self, degrees, mode):
-        fullStepsForFullRotation = 554
+        fullStepsForFullRotation = 559
         
         # checks which mode the stepperMode is set to and calculates how many steps it needs
         stepsToGo = 0
@@ -374,3 +374,67 @@ class JoystickController:
         else:
             return [[0, 0],[0, 0],self.button.value()]
 
+class MonitorClass:
+    def __init__(self, LDRPIN, REFERENCE_VOLTAGE, REFERENCE_RESISTANCE):
+        self.LDRPIN = ADC(Pin(LDRPIN))
+        self.REFERENCE_VOLTAGE = REFERENCE_VOLTAGE
+        self.REFERENCE_RESISTANCE = REFERENCE_RESISTANCE
+    
+    async def monitor(self):
+            # Read the value from the LDR
+            LDRValue = self.LDRPIN.read_u16()
+            # Calculate the voltage
+            voltage = LDRValue * self.REFERENCE_VOLTAGE / 65535
+            return voltage
+    
+    async def monitordigital(self, VOLTAGE_CUTOFF):
+        return self.monitor() > VOLTAGE_CUTOFF
+    
+    
+class deadReckoningHandler:
+    def __init__(self, DifferentialDriver, position = [0, 0], angle = 0):
+        self.diffdriver = DifferentialDriver
+        self.position = position
+        self.angle = angle
+        self.scalingFactor = 400
+    
+    async def move(self, distance):
+        self.position[0] += distance[0]
+        self.position[1] += distance[1]
+        await self.diffdriver.goForwardGivenDistance(math.sqrt(distance[0]**2 + distance[1]**2))
+
+    async def rotate(self, angle):
+        self.angle += angle
+        await self.diffdriver.inPlaceRotation(angle)
+    
+    def getPosition(self):
+        return self.position
+    
+    def getAngle(self):
+        return self.angle
+    
+    def setPosition(self, position):
+        self.position = position
+    
+    def setAngle(self, angle):
+        self.angle = angle
+
+    async def moveToPoint(self, point):
+        distance = [point[0] - self.position[0], point[1] - self.position[1]]
+        angle = math.atan2(distance[1], distance[0])*(360/(2 *math.pi)) - self.angle
+        if angle > 180:
+            angle -= 360
+        if angle < -180:
+            angle += 360
+
+        await self.rotate(angle)
+        await uasyncio.sleep(0.5)
+        await self.move(distance)
+    
+    async def moveToPolar(self, distance, angle):
+        self.position[0] += distance * math.cos(angle)
+        self.position[1] += distance * math.sin(angle)
+        await self.rotate(angle - self.angle)
+        await uasyncio.sleep(0.5)
+        await self.move([distance * math.cos(angle), distance * math.sin(angle)])
+    
