@@ -7,10 +7,19 @@ from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, Monitor
 
 
 async def start():
-    while True:
-        print("left: " + str(await leftMonitor.monitor()) + " right: " + str(await rightMonitor.monitor()))
-        
-        await asyncio.sleep(0.1)
+    #await car.goForward(-568)
+    pather.setAngle(90)
+    #await car.inPlaceRotation(180)
+    await pather.moveToPoint([-136,-67])
+    sleep(1)
+    await pather.moveToPoint([-30,-45])
+    sleep(1)
+    await pather.moveToPoint([0,-250])
+    multiStepper.stop()
+    #while True:
+    #    print("left: " + str(await leftMonitor.monitor()) + " right: " + str(await rightMonitor.monitor()))
+    #    
+    #    await asyncio.sleep(0.1)
 
 
 if __name__ == '__main__':
@@ -36,20 +45,22 @@ if __name__ == '__main__':
     print("Starts")
 
     # Makes objects for the motor
-    motorRight = StepperMotor([0,1,2,3], 0.2, 18000, StepperMotor.half_step)
-    motorLeft = StepperMotor([4,5,6,7], 0.2, 18000, StepperMotor.half_step)
+    motorRight = StepperMotor(reversed([0,1,2,3]), 0.2, 18000, StepperMotor.half_step)
+    motorLeft = StepperMotor(reversed([4,5,6,7]), 0.2, 18000, StepperMotor.half_step)
 
 
     # Makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
 
     # Set their delays
-    multiStepper.set_Delays([0.01,0.01])
+    multiStepper.set_Delays([0.002,0.002])
 
 
     # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
 
+    # Makes a deadReckoningHandler object
+    pather = deadReckoningHandler(car)
 
     try:
         asyncio.run(start())

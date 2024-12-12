@@ -303,7 +303,7 @@ class DifferentialDriver():
     
     # Function to calculates steps to turn given amount of degrees
     def inPlaceRotationStepsToDegree(self, degrees, mode):
-        fullStepsForFullRotation = 554
+        fullStepsForFullRotation = 559
         
         # checks which mode the stepperMode is set to and calculates how many steps it needs
         stepsToGo = 0
@@ -392,10 +392,10 @@ class MonitorClass:
     
     
 class deadReckoningHandler:
-    def __init__(self, DifferentialDriver):
+    def __init__(self, DifferentialDriver, position = [0, 0], angle = 0):
         self.diffdriver = DifferentialDriver
-        self.position = [0, 0]
-        self.angle = 0
+        self.position = position
+        self.angle = angle
         self.scalingFactor = 400
     
     async def move(self, distance):
@@ -421,13 +421,20 @@ class deadReckoningHandler:
 
     async def moveToPoint(self, point):
         distance = [point[0] - self.position[0], point[1] - self.position[1]]
-        angle = math.atan2(distance[1], distance[0]) - self.angle
+        angle = math.atan2(distance[1], distance[0])*(360/(2 *math.pi)) - self.angle
+        if angle > 180:
+            angle -= 360
+        if angle < -180:
+            angle += 360
+
         await self.rotate(angle)
+        await uasyncio.sleep(0.5)
         await self.move(distance)
     
-    async def moveToPointWithAngle(self, point, angle):
-        distance = [point[0] - self.position[0], point[1] - self.position[1]]
-        angle = angle - self.angle
-        await self.rotate(angle)
-        await self.move(distance)
+    async def moveToPolar(self, distance, angle):
+        self.position[0] += distance * math.cos(angle)
+        self.position[1] += distance * math.sin(angle)
+        await self.rotate(angle - self.angle)
+        await uasyncio.sleep(0.5)
+        await self.move([distance * math.cos(angle), distance * math.sin(angle)])
     
