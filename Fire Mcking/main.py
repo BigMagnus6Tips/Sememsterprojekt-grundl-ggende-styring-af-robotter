@@ -43,7 +43,16 @@ async def monitorStart():
             # This is for plotting the time in the csv file.
             current_time += 0.002
 
-
+ 
+def turnBlackOn(pin):
+    global onBlack
+    print("On black")
+    onBlack = True
+    
+def turnBlackOff(pin):
+    global onBlack
+    print("On white")
+    onBlack = False
 
 
 # Function to blink the onboard LED
@@ -60,8 +69,8 @@ async def start():
     shouldMonitor = True
     global onBlack
     onBlack = False
-    uasyncio.create_task(monitorStart())
-    uasyncio.create_task(blinkLed())
+    #uasyncio.create_task(monitorStart())
+    #uasyncio.create_task(blinkLed())
     maxSpeed = 600 # 600 er limit for koden ca. ved 30 % PWM
     resolution = 10
     timeToMaxSpeed = 1
@@ -74,10 +83,12 @@ async def start():
     while True:
         if onBlack:
             multiStepper.set_Speed([maxSpeed*leftMotorSpeed/rightMotorSpeed, maxSpeed])
+            #print("now moving")
             await multiStepper.move([leftMotorSpeed,rightMotorSpeed])
         else:
             multiStepper.set_Speed([maxSpeed, maxSpeed])
             await multiStepper.move([10,10])
+            #print("turning")
     
     
     """    
@@ -113,8 +124,10 @@ if __name__ == '__main__':
     # Makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
 
+    ldrPin = Pin(15, Pin.IN, Pin.PULL_DOWN)
 
-
+    ldrPin.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOn)
+    ldrPin.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOff)
 
     # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
