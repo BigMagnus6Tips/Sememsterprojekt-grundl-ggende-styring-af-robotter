@@ -109,7 +109,7 @@ class StepperMotor:
             print(f"! Delay limit ! (delay set to {self.delay} instead)")
         else:
             self.delay = delay
-            print(self.delay)
+            #print(self.delay)
 
     
     # function to set the PWM percantage
