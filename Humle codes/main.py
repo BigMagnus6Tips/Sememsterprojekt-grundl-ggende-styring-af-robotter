@@ -1,25 +1,25 @@
 from machine import Pin, Timer, PWM, ADC
 from time import sleep
 import uasyncio as asyncio
-from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, deadReckoningHandler
+from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, DeadReckoningHandler
 
 
 
 
 async def start():
     #await car.goForward(-568)
-    pather.setAngle(90)
+    #pather.setAngle(90)
     #await car.inPlaceRotation(180)
-    await pather.moveToPoint([-136,-67])
-    sleep(1)
-    await pather.moveToPoint([-30,-45])
-    sleep(1)
-    await pather.moveToPoint([0,-250])
-    multiStepper.stop()
-    #while True:
-    #    print("left: " + str(await leftMonitor.monitor()) + " right: " + str(await rightMonitor.monitor()))
-    #    
-    #    await asyncio.sleep(0.1)
+    #await pather.moveToPoint([-136,-67])
+    #sleep(1)
+    #await pather.moveToPoint([-30,-45])
+    #sleep(1)
+    #await pather.moveToPoint([0,-250])
+    #multiStepper.stop()
+    while True:
+        print("left: " + str(leftMonitor.monitor()) + " right: " + str(rightMonitor.monitor()))
+        
+        await asyncio.sleep(0.1)
 
 
 if __name__ == '__main__':
@@ -39,8 +39,8 @@ if __name__ == '__main__':
     REFERENCE_VOLTAGE = 3.3
     R2 = 2200  # Known resistor value in the voltage divider circuit. We chose this resistor to get a linear graph between resistance and voltage, so that we could get as big of a span as possible.
 
-    leftMonitor = MonitorClass(leftAdcPin, REFERENCE_VOLTAGE,R2 )
-    rightMonitor = MonitorClass(rightAdcPin, REFERENCE_VOLTAGE, R2)
+    leftMonitor = MonitorClass(leftAdcPin, REFERENCE_VOLTAGE, R2, [21, -2])
+    rightMonitor = MonitorClass(rightAdcPin, REFERENCE_VOLTAGE, R2, [21, 2])
 
     print("Starts")
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     car = DifferentialDriver(multiStepper)
 
     # Makes a deadReckoningHandler object
-    pather = deadReckoningHandler(car)
+    pather = DeadReckoningHandler(car)
 
     try:
         asyncio.run(start())

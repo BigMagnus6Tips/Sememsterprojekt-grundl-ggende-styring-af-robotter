@@ -264,9 +264,10 @@ class MultiStepper():
 
 # Class for the differential driver
 class DifferentialDriver():
+    fullStepsForFullRotation = 559
+    
     def __init__(self, multiStepper):
         self.multiStepper = multiStepper
-    
     # Steps to calculate steps for a given distance in 
     def distanceToSteps(self, distanceCm, mode):
         # The measuered diameter of the wheels
@@ -286,6 +287,17 @@ class DifferentialDriver():
         # Rounds the steps to go
         return round(stepsToGo)
     
+    def stepsToDistance(self, steps, mode):
+        diameter = 8.7
+        circumference = diameter*math.pi
+        distance = 0
+        if mode == StepperMotor.full_step:
+            distance = circumference*steps/200
+        elif mode == StepperMotor.half_step:
+            distance = circumference*steps/400
+        elif mode == StepperMotor.micro_step:
+            distance = circumference*steps/(200*len(StepperMotor.micro_step_sequence)/4)
+        return distance
     
     # Function to go forward and backwards by making steps variable negative
     async def goForward(self, steps):
@@ -302,27 +314,38 @@ class DifferentialDriver():
         await self.multiStepper.move([steps0, steps1])
     
     # Function to calculates steps to turn given amount of degrees
-    def inPlaceRotationStepsToDegree(self, degrees, mode):
-        fullStepsForFullRotation = 559
+    def inPlaceRotationDegreesToSteps(self, degrees, mode):
+ 
         
         # checks which mode the stepperMode is set to and calculates how many steps it needs
         stepsToGo = 0
         if mode == StepperMotor.full_step:
-           stepsToGo = fullStepsForFullRotation*degrees/360
+           stepsToGo = self.fullStepsForFullRotation*degrees/360
         elif mode == StepperMotor.half_step:
-            stepsToGo = 2*fullStepsForFullRotation*degrees/360
+            stepsToGo = 2*self.fullStepsForFullRotation*degrees/360
         elif mode == StepperMotor.micro_step:
-           stepsToGo = fullStepsForFullRotation*len(StepperMotor.micro_step_sequence)/4
+           stepsToGo = self.fullStepsForFullRotation*len(StepperMotor.micro_step_sequence)/4
         
         # Rounds the steps to go
         return round(stepsToGo)
+    
+    def inPlaceRotationStepstoDegrees(self, steps, mode):
+        degrees = 0
+        if mode == StepperMotor.full_step:
+            degrees = 360*steps/self.fullStepsForFullRotation
+        elif mode == StepperMotor.half_step:
+            degrees = 360*steps/(2*self.fullStepsForFullRotation)
+        elif mode == StepperMotor.micro_step:
+            degrees = 360*steps/(self.fullStepsForFullRotation*len(StepperMotor.micro_step_sequence)/4)
+        
+        return degrees
     
     # Function for rotating on place in both ways depending on if steps is negative og positiv
     async def inPlaceRotation(self, degree):
         print("inPlaceRotation")
         # Calculates the steps each motor has to take to turn given the degrees
-        steps0 = self.inPlaceRotationStepsToDegree(degree, self.multiStepper.getModes()[0])
-        steps1 = self.inPlaceRotationStepsToDegree(degree, self.multiStepper.getModes()[1])
+        steps0 = self.inPlaceRotationDegreesToSteps(degree, self.multiStepper.getModes()[0])
+        steps1 = self.inPlaceRotationDegreesToSteps(degree, self.multiStepper.getModes()[1])
         print(steps0, steps1)
 
 
@@ -375,41 +398,53 @@ class JoystickController:
             return [[0, 0],[0, 0],self.button.value()]
 
 class MonitorClass:
-    def __init__(self, LDRPIN, REFERENCE_VOLTAGE, REFERENCE_RESISTANCE):
+    def __init__(self, LDRPIN, REFERENCE_VOLTAGE, REFERENCE_RESISTANCE, LDROFFSET = [0, 0]):
         self.LDRPIN = ADC(Pin(LDRPIN))
         self.REFERENCE_VOLTAGE = REFERENCE_VOLTAGE
         self.REFERENCE_RESISTANCE = REFERENCE_RESISTANCE
+        self.LDROFFSET = LDROFFSET
     
-    async def monitor(self):
+    def monitor(self):
             # Read the value from the LDR
             LDRValue = self.LDRPIN.read_u16()
             # Calculate the voltage
             voltage = LDRValue * self.REFERENCE_VOLTAGE / 65535
             return voltage
     
-    async def monitordigital(self, VOLTAGE_CUTOFF):
+    def monitordigital(self, VOLTAGE_CUTOFF):
         return self.monitor() > VOLTAGE_CUTOFF
     
+    def getoffset(self):
+        return self.LDROFFSET
     
-class deadReckoningHandler:
-    def __init__(self, DifferentialDriver, position = [0, 0], angle = 0):
+    
+class DeadReckoningHandler:
+    def __init__(self, DifferentialDriver, positionInSteps = [0, 0], angle = 0):
         self.diffdriver = DifferentialDriver
-        self.position = position
+        self.positionInSteps = positionInSteps
         self.angle = angle
-        self.scalingFactor = 400
     
-    async def move(self, distance):
-        self.position[0] += distance[0]
-        self.position[1] += distance[1]
-        await self.diffdriver.goForwardGivenDistance(math.sqrt(distance[0]**2 + distance[1]**2))
+
+
 
     async def rotate(self, angle):
-        self.angle += angle
-        await self.diffdriver.inPlaceRotation(angle)
-    
+        stepsToTake = self.diffdriver.inplaceRotationDegreesToSteps(angle)
+        deltaAngle =  self.diffdriver.inPlaceRotationStepstoDegrees(stepsToTake)
+        self.angle += deltaAngle
+        await self.diffdriver.inPlaceRotation(deltaAngle)
+
+    async def goForwardInSteps(self, steps):
+        self.position[0] += steps * math.cos(self.angle*math.pi/180)
+        self.position[1] += steps * math.sin(self.angle*math.pi/180)
+        await self.diffdriver.goForward(steps)
+
+
     def getPosition(self):
         return self.position
     
+    def getPositionInCentimeter(self):
+        return [self.position[0]/self.diffdriver.multiStepper.stepperMotors[0].scalingFactor, self.position[1]/self.diffdriver.multiStepper.stepperMotors[0].scalingFactor]
+
     def getAngle(self):
         return self.angle
     
@@ -429,12 +464,57 @@ class deadReckoningHandler:
 
         await self.rotate(angle)
         await uasyncio.sleep(0.5)
-        await self.move(distance)
+        await self.goForwardInSteps(self.diffdriver.goForwardDistanceToSteps(math.sqrt(distance[0]**2 + distance[1]**2)))
     
     async def moveToPolar(self, distance, angle):
-        self.position[0] += distance * math.cos(angle)
-        self.position[1] += distance * math.sin(angle)
         await self.rotate(angle - self.angle)
         await uasyncio.sleep(0.5)
-        await self.move([distance * math.cos(angle), distance * math.sin(angle)])
+        await self.goForwardInSteps(self.diffdriver.goForwardDistanceToSteps(distance))
     
+    async def home(self, leftLDR, rightLDR, homePosition = [0, 0], homeAngle = 90, homingDistance = 223):
+        self.leftCoordinates = []
+        self.rightCoordinates = []
+        
+        testNumberOfDots = 10
+        
+        for _ in range(testNumberOfDots):
+            ldrLine = await self.moveHoming(leftLDR, rightLDR)
+            if ldrLine == 0:
+                    position = self.getPositionInCentimeter()
+                    ldrPosition = leftLDR.getOffset()
+                    self.leftCoordinates.append([position[0]+ldrPosition[0]*math.cos(self.getAngle()*math.pi/180)-position[1]+ldrPosition[1]*math.sin(self.getAngle()*math.pi/180),
+                                                position[1]+ldrPosition[0]*math.sin(self.getAngle()*math.pi/180)+position[1]+ldrPosition[1]*math.cos(self.getAngle()*math.pi/180)])
+                    await self.rotate(10)
+        
+            elif ldrLine == 1:
+                    position = self.getPositionInCentimeter()
+                    ldrPosition = rightLDR.getOffset()
+                    self.rightCoordinates.append([position[0]+ldrPosition[0]*math.cos(self.getAngle()*math.pi/180)-position[1]+ldrPosition[1]*math.sin(self.getAngle()*math.pi/180),
+                                                position[1]+ldrPosition[0]*math.sin(self.getAngle()*math.pi/180)+position[1]+ldrPosition[1]*math.cos(self.getAngle()*math.pi/180)])
+                    await self.rotate(-10)
+        
+        with open('left_coordinates.csv', 'w') as file:
+            file.write('x,y\n')
+            for coord in self.leftCoordinates:
+                file.write(f'{coord[0]:.2f},{coord[1]:.2f}\n')
+
+        with open('right_coordinates.csv', 'w') as file:
+            file.write('x,y\n')
+            for coord in self.rightCoordinates:
+                file.write(f'{coord[0]:.2f},{coord[1]:.2f}\n')
+        
+
+    async def moveHoming(self, leftLDR, rightLDR, cutoff = 1.5):
+        while True:
+            leftValue = leftLDR.monitorDigital(cutoff)
+            rightValue = rightLDR.monitorDigital(cutoff)
+            if leftValue:
+                return 0
+            elif rightValue:
+                return 1
+            self.diffdriver.goForwardInSteps(1)
+            await uasyncio.sleep(0.01)
+                                
+
+    async def turnHoming(self, leftLDR, rightLDR):
+        pass 
