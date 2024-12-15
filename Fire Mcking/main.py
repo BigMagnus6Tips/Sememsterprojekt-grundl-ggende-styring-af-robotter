@@ -11,22 +11,53 @@ THRESHOLD = 0.75  # Threshold value for the LDR to detect black or white. This v
  
 def turnBlackOn(pin):
     global onBlack
-    print("On black")
+    #print("On black")
     onBlack = True
     
 def turnBlackOff(pin):
     global onBlack
-    print("On white")
+    #print("On white")
     onBlack = False
+
+def turnBlack2On(pin):
+    global onBlack2
+    #print("On black2")
+    onBlack2 = True
+    
+def turnBlack2Off(pin):
+    global onBlack2
+    #print("On white2")
+    onBlack2 = False
+
+
 
 async def monitorLDR():
     global onBlack
+    global onBlack2
     while True:
-        if ldrPin1.value() == 0:
+        if ldrPin3.value() == 1:
+            onBlack2 = True
+        else:
+            onBlack2 = False
+        
+        if ldrPin1.value() == 1:
             onBlack = True
         else:
             onBlack = False
         await uasyncio.sleep(0.001)
+
+def monitorLDRsync():
+    global onBlack
+    global onBlack2
+    if ldrPin3.value() == 1:
+        onBlack2 = True
+    else:
+        onBlack2 = False
+    
+    if ldrPin1.value() == 1:
+        onBlack = True
+    else:
+        onBlack = False
 
 
 # Function to blink the onboard LED
@@ -40,24 +71,42 @@ async def blinkLed():
 # function to start the program
 async def start():
     global onBlack
+    global onBlack2
+    
+    onBlack2 = False
     onBlack = False
     #uasyncio.create_task(blinkLed())
     #uasyncio.create_task(monitorLDR())
-    maxSpeed = 600 # 600 er limit for koden ca. ved 30 % PWM
-    resolution = 10
-    timeToMaxSpeed = 1
+    maxSpeed = 800 # 600 er limit for koden ca. ved 30 % PWM
+    resolution = 50
+    timeToMaxSpeed = 0.5
     timeForEachResolution = timeToMaxSpeed/resolution
     speedSteps = maxSpeed/resolution
+    
+    sleep(1)
+    
+    
+    for i in range(1, resolution+1):
+        multiStepper.set_Speed([i*speedSteps, i*speedSteps])
+        print(i*speedSteps)
+        await multiStepper.move([i*speedSteps*timeForEachResolution,i*speedSteps*timeForEachResolution])
+    
+    
     multiStepper.set_Speed([maxSpeed, maxSpeed])
-    leftMotorSpeed = 24
-    rightMotorSpeed = 40
-    sleep(2)
+
     while True:
-        print(ldrPin1.value())
-        if onBlack:
-            multiStepper.set_Speed([maxSpeed*leftMotorSpeed/rightMotorSpeed, maxSpeed])
-            #print("now moving")
-            await multiStepper.move([leftMotorSpeed,rightMotorSpeed])
+        monitorLDRsync()
+        if onBlack2:
+            leftMotorAmount = 4
+            rightMotorAmount = 20
+            multiStepper.set_Speed([maxSpeed*leftMotorAmount/rightMotorAmount, maxSpeed])
+            await multiStepper.move([leftMotorAmount,rightMotorAmount])
+            
+        elif onBlack:
+            leftMotorAmount = 3
+            rightMotorAmount = 7
+            multiStepper.set_Speed([maxSpeed*leftMotorAmount/rightMotorAmount, maxSpeed])
+            await multiStepper.move([leftMotorAmount,rightMotorAmount])
             
         else:
             multiStepper.set_Speed([maxSpeed, maxSpeed])
@@ -95,12 +144,16 @@ if __name__ == '__main__':
     # Makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
 
-    ldrPin1 = Pin(26, Pin.IN, Pin.PULL_DOWN)
+    ldrPin1 = Pin(28, Pin.IN, Pin.PULL_DOWN)
     ldrPin2 = Pin(27, Pin.IN, Pin.PULL_DOWN)
+    ldrPin3 = Pin(26, Pin.IN, Pin.PULL_DOWN)
+    ldrPin4 = Pin(19, Pin.IN, Pin.PULL_DOWN)
     
-    ldrPin1.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOn)
-    ldrPin2.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOff)
+    #ldrPin1.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOff)
+    #ldrPin2.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOn)
 
+    #ldrPin3.irq(trigger=Pin.IRQ_FALLING, handler=turnBlack2Off)
+    #ldrPin4.irq(trigger=Pin.IRQ_RISING, handler=turnBlack2On)
 
     # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
