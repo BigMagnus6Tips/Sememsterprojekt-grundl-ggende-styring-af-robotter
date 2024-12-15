@@ -9,17 +9,29 @@ knownLinePositions = []
 async def start():
     #await car.goForward(-568)
     #pather.setAngle(90)
+    #await pather.moveToPoint([0,29])
     #await car.inPlaceRotation(180)
-    #await pather.moveToPoint([-136,-67])
+    #await pather.moveToPoint([0,99])
+    #print("point 1")
+    #print(str(pather.getPositionInCentimeter()) + " " + str(pather.getAngle()))
     #sleep(1)
-    #await pather.moveToPoint([-30,-45])
+    #await pather.moveToPoint([30,30+99])
+    #print("point 2")
     #sleep(1)
-    #await pather.moveToPoint([0,-250])
+    #await pather.moveToPoint([30,81+30+99])
+    #print("point 3")
+    #sleep(1)
+    #await pather.moveToPoint([30,30])
+    #sleep(1)
+    #await pather.moveToPoint([0,99])
+    #await car.inPlaceRotation(-1.5)
     #multiStepper.stop()
-    while True:
-        print("left: " + str(leftMonitor.monitor()) + " right: " + str(rightMonitor.monitor()))
-        
-        await asyncio.sleep(0.1)
+    #while True:
+    #    print("left: " + str(leftMonitor.monitorDigital(leftAdcCutoff)) + " right: " + str(rightMonitor.monitorDigital(rightAdcCutoff)))
+    #    
+    #    await asyncio.sleep(0.1)
+    #pather.setAngle(0)
+    await pather.home(leftMonitor, rightMonitor)
 
 
 if __name__ == '__main__':
@@ -34,6 +46,9 @@ if __name__ == '__main__':
     # Adc pin for moonitoring the LDR
     leftAdcPin = 26  # GP26 is labeled as ADC0 on Pico found in the Kicad drawing
     rightAdcPin = 27  # GP27 is labeled as ADC1 on Pico found in the Kicad drawing
+
+    leftAdcCutoff = 2.2
+    rightAdcCutoff = 2.2
 
     # Reference voltage for the Pico W
     REFERENCE_VOLTAGE = 3.3
@@ -53,7 +68,7 @@ if __name__ == '__main__':
     multiStepper = MultiStepper([motorLeft, motorRight])
 
     # Set their delays
-    multiStepper.set_Delays([0.002,0.002])
+    multiStepper.set_Delays([0.008,0.008])
 
 
     # Makes a differentialDriver object

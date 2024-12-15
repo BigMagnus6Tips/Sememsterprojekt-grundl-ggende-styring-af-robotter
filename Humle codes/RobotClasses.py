@@ -411,25 +411,25 @@ class MonitorClass:
             voltage = LDRValue * self.REFERENCE_VOLTAGE / 65535
             return voltage
     
-    def monitordigital(self, VOLTAGE_CUTOFF):
-        return self.monitor() > VOLTAGE_CUTOFF
+    def monitorDigital(self, VOLTAGE_CUTOFF):
+        return self.monitor() < VOLTAGE_CUTOFF
     
-    def getoffset(self):
+    def getOffset(self):
         return self.LDROFFSET
     
     
 class DeadReckoningHandler:
-    def __init__(self, DifferentialDriver, positionInSteps = [0, 0], angle = 0):
+    def __init__(self, DifferentialDriver, position = [0, 0], angle = 0):
         self.diffdriver = DifferentialDriver
-        self.positionInSteps = positionInSteps
+        self.position = position
         self.angle = angle
     
 
 
 
     async def rotate(self, angle):
-        stepsToTake = self.diffdriver.inplaceRotationDegreesToSteps(angle)
-        deltaAngle =  self.diffdriver.inPlaceRotationStepstoDegrees(stepsToTake)
+        stepsToTake = self.diffdriver.inPlaceRotationDegreesToSteps(angle, self.diffdriver.multiStepper.getModes()[0])
+        deltaAngle =  self.diffdriver.inPlaceRotationStepstoDegrees(stepsToTake, self.diffdriver.multiStepper.getModes()[0])
         self.angle += deltaAngle
         await self.diffdriver.inPlaceRotation(deltaAngle)
 
@@ -443,7 +443,7 @@ class DeadReckoningHandler:
         return self.position
     
     def getPositionInCentimeter(self):
-        return [self.position[0]/self.diffdriver.multiStepper.stepperMotors[0].scalingFactor, self.position[1]/self.diffdriver.multiStepper.stepperMotors[0].scalingFactor]
+        return [self.diffdriver.stepsToDistance(self.position[0], self.diffdriver.multiStepper.getModes()[0]), self.diffdriver.stepsToDistance(self.position[1], self.diffdriver.multiStepper.getModes()[0])]
 
     def getAngle(self):
         return self.angle
@@ -455,7 +455,8 @@ class DeadReckoningHandler:
         self.angle = angle
 
     async def moveToPoint(self, point):
-        distance = [point[0] - self.position[0], point[1] - self.position[1]]
+        distance = [point[0] - self.diffdriver.stepsToDistance(self.position[0], self.diffdriver.multiStepper.getModes()[0]), point[1] - self.diffdriver.stepsToDistance(self.position[1], self.diffdriver.multiStepper.getModes()[0])]
+        print("distance: " + str(distance))
         angle = math.atan2(distance[1], distance[0])*(360/(2 *math.pi)) - self.angle
         if angle > 180:
             angle -= 360
@@ -464,13 +465,20 @@ class DeadReckoningHandler:
 
         await self.rotate(angle)
         await uasyncio.sleep(0.5)
-        await self.goForwardInSteps(self.diffdriver.goForwardDistanceToSteps(math.sqrt(distance[0]**2 + distance[1]**2)))
+        await self.goForwardInSteps(self.diffdriver.distanceToSteps(math.sqrt(distance[0]**2 + distance[1]**2),self.diffdriver.multiStepper.getModes()[0]))
     
     async def moveToPolar(self, distance, angle):
         await self.rotate(angle - self.angle)
         await uasyncio.sleep(0.5)
-        await self.goForwardInSteps(self.diffdriver.goForwardDistanceToSteps(distance))
+        await self.goForwardInSteps(self.diffdriver.distanceToSteps(distance,self.diffdriver.multiStepper.getModes()[0]))
     
+    async def pickupAtPoint(self, point, crane = None):
+        #moves the robot to 30 cm before the point, then moves the crane down and picks up the object
+        newPoint = [point[0] - 30*math.cos(self.angle*math.pi/180), point[1] - 30*math.sin(self.angle*math.pi/180)]
+        await self.moveToPoint(newPoint)
+        
+
+
     async def home(self, leftLDR, rightLDR, homePosition = [0, 0], homeAngle = 90, homingDistance = 223):
         self.leftCoordinates = []
         self.rightCoordinates = []
@@ -484,14 +492,17 @@ class DeadReckoningHandler:
                     ldrPosition = leftLDR.getOffset()
                     self.leftCoordinates.append([position[0]+ldrPosition[0]*math.cos(self.getAngle()*math.pi/180)-position[1]+ldrPosition[1]*math.sin(self.getAngle()*math.pi/180),
                                                 position[1]+ldrPosition[0]*math.sin(self.getAngle()*math.pi/180)+position[1]+ldrPosition[1]*math.cos(self.getAngle()*math.pi/180)])
-                    await self.rotate(10)
+                    await self.rotate(3)
         
             elif ldrLine == 1:
                     position = self.getPositionInCentimeter()
                     ldrPosition = rightLDR.getOffset()
                     self.rightCoordinates.append([position[0]+ldrPosition[0]*math.cos(self.getAngle()*math.pi/180)-position[1]+ldrPosition[1]*math.sin(self.getAngle()*math.pi/180),
                                                 position[1]+ldrPosition[0]*math.sin(self.getAngle()*math.pi/180)+position[1]+ldrPosition[1]*math.cos(self.getAngle()*math.pi/180)])
-                    await self.rotate(-10)
+                    await self.rotate(-3)
+            elif ldrLine == 2:
+                print("Homing done")
+                break
         
         with open('left_coordinates.csv', 'w') as file:
             file.write('x,y\n')
@@ -502,18 +513,28 @@ class DeadReckoningHandler:
             file.write('x,y\n')
             for coord in self.rightCoordinates:
                 file.write(f'{coord[0]:.2f},{coord[1]:.2f}\n')
+        print(str(self.angle))
         
 
-    async def moveHoming(self, leftLDR, rightLDR, cutoff = 1.5):
+    async def moveHoming(self, leftLDR, rightLDR, cutoff = 2.2, homingDistance = 223):
+        rotateIndex = 0
         while True:
+
             leftValue = leftLDR.monitorDigital(cutoff)
             rightValue = rightLDR.monitorDigital(cutoff)
             if leftValue:
                 return 0
             elif rightValue:
                 return 1
-            self.diffdriver.goForwardInSteps(1)
-            await uasyncio.sleep(0.01)
+            elif self.position[0]**2+self.position[1]**2 > (self.diffdriver.distanceToSteps(homingDistance, self.diffdriver.multiStepper.getModes()[0]))**2:
+                print((self.position[0]**2+self.position[1]**2)**0.5)
+                return 2 
+            rotateIndex += 1
+            if rotateIndex%400 == 0:
+                await self.rotate(2)
+
+            await self.goForwardInSteps(1)
+            await uasyncio.sleep(0.0001)
                                 
 
     async def turnHoming(self, leftLDR, rightLDR):

@@ -4,13 +4,17 @@ import matplotlib.pyplot as plt
 left_coordinates = []
 right_coordinates = []
 
-with open('left_coordinates.csv', 'r') as file:
+with open('Humle codes/left_coordinates.csv', 'r') as file:
     for line in file:
+        if line.startswith('x,y'):  # Skip the first line
+            continue
         x, y = map(float, line.strip().split(','))
         left_coordinates.append((x, y))
 
-with open('right_coordinates.csv', 'r') as file:
+with open('Humle codes/right_coordinates.csv', 'r') as file:
     for line in file:
+        if line.startswith('x,y'): # Skip the first line
+            continue
         x, y = map(float, line.strip().split(','))
         right_coordinates.append((x, y))
 
