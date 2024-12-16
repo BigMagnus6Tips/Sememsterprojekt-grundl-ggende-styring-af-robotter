@@ -649,7 +649,7 @@
 		(descr "Resistor, Axial_DIN0204 series, Axial, Horizontal, pin pitch=7.62mm, 0.167W, length*diameter=3.6*1.6mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0204 series Axial Horizontal pin pitch 7.62mm 0.167W length 3.6mm diameter 1.6mm")
 		(property "Reference" "R8"
-			(at 3.81 -1.92 360)
+			(at 3.81 -1.92 0)
 			(layer "F.SilkS")
 			(uuid "975854b8-561f-4e62-99f9-f7d741f3e03a")
 			(effects
@@ -660,7 +660,7 @@
 			)
 		)
 		(property "Value" "30"
-			(at 3.81 1.92 360)
+			(at 3.81 1.92 0)
 			(layer "F.Fab")
 			(uuid "6b79ce03-d767-48bf-b04f-01aeb82e3d51")
 			(effects
@@ -875,7 +875,7 @@
 			(uuid "be4e7f2a-f3d4-457a-a5d4-4a1f738627d7")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 3.81 0 360)
+			(at 3.81 0 0)
 			(layer "F.Fab")
 			(uuid "1ddbfc26-9c79-436d-b350-0cc70f80ea82")
 			(effects
@@ -1685,7 +1685,7 @@
 		(descr "Terminal Block Phoenix MKDS-1,5-2, 2 pins, pitch 5mm, size 10x9.8mm^2, drill diamater 1.3mm, pad diameter 2.6mm, see http://www.farnell.com/datasheets/100425.pdf, script-generated using https://github.com/pointhi/kicad-footprint-generator/scripts/TerminalBlock_Phoenix")
 		(tags "THT Terminal Block Phoenix MKDS-1,5-2 pitch 5mm size 10x9.8mm^2 drill 1.3mm pad 2.6mm")
 		(property "Reference" "D2"
-			(at 2.5 -6.26 360)
+			(at 2.5 -6.26 0)
 			(layer "F.SilkS")
 			(uuid "dcf71f38-9124-4207-bef2-1e1fa9405f90")
 			(effects
@@ -1696,7 +1696,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 2.5 5.66 360)
+			(at 2.5 5.66 0)
 			(layer "F.Fab")
 			(uuid "1b8aafd8-f358-4578-8fd1-32f7cfece2bb")
 			(effects
@@ -2129,7 +2129,7 @@
 			(uuid "22c604e1-7cbe-4ffd-827d-f02e93e690de")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 2.5 3.2 360)
+			(at 2.5 3.2 0)
 			(layer "F.Fab")
 			(uuid "a0481e4e-6da6-498c-811e-aa4e9f67d0f0")
 			(effects
@@ -3821,7 +3821,7 @@
 		(descr "Terminal Block Phoenix MKDS-1,5-2, 2 pins, pitch 5mm, size 10x9.8mm^2, drill diamater 1.3mm, pad diameter 2.6mm, see http://www.farnell.com/datasheets/100425.pdf, script-generated using https://github.com/pointhi/kicad-footprint-generator/scripts/TerminalBlock_Phoenix")
 		(tags "THT Terminal Block Phoenix MKDS-1,5-2 pitch 5mm size 10x9.8mm^2 drill 1.3mm pad 2.6mm")
 		(property "Reference" "D1"
-			(at 2.5 -6.26 360)
+			(at 2.5 -6.26 0)
 			(layer "F.SilkS")
 			(uuid "f5fc5426-785d-4090-8be1-7e527b924e52")
 			(effects
@@ -3832,7 +3832,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 2.5 5.66 360)
+			(at 2.5 5.66 0)
 			(layer "F.Fab")
 			(uuid "8be61b87-29ce-4565-b440-6666bc7085b9")
 			(effects
@@ -4265,7 +4265,7 @@
 			(uuid "3ad745a2-83f1-417f-a3e3-9ca8f09c9ccc")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 2.5 3.2 360)
+			(at 2.5 3.2 0)
 			(layer "F.Fab")
 			(uuid "dff19ec0-5a82-49dc-bcd1-265373718deb")
 			(effects
@@ -4316,7 +4316,7 @@
 		(descr "Resistor, Axial_DIN0204 series, Axial, Horizontal, pin pitch=7.62mm, 0.167W, length*diameter=3.6*1.6mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 		(tags "Resistor Axial_DIN0204 series Axial Horizontal pin pitch 7.62mm 0.167W length 3.6mm diameter 1.6mm")
 		(property "Reference" "R9"
-			(at 3.81 -1.92 360)
+			(at 3.81 -1.92 0)
 			(layer "F.SilkS")
 			(uuid "079cf000-2f9a-4e8b-b1e9-4f0e5c7cd7f2")
 			(effects
@@ -4327,7 +4327,7 @@
 			)
 		)
 		(property "Value" "30"
-			(at 3.81 1.92 360)
+			(at 3.81 1.92 0)
 			(layer "F.Fab")
 			(uuid "7076511b-f3bf-4465-aa5e-081f3d75f0e2")
 			(effects
@@ -4542,7 +4542,7 @@
 			(uuid "f4bddddf-91cf-4bd0-a21e-4865c44c6bc5")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 3.81 0 360)
+			(at 3.81 0 0)
 			(layer "F.Fab")
 			(uuid "26126adf-c439-4f0b-bd9f-cbd41e7c1aee")
 			(effects
