@@ -483,10 +483,10 @@ class DeadReckoningHandler:
         self.leftCoordinates = []
         self.rightCoordinates = []
         
-        testNumberOfDots = 10
+        testNumberOfDots = 100
         
         for _ in range(testNumberOfDots):
-            ldrLine = await self.moveHoming(leftLDR, rightLDR)
+            ldrLine = await self.moveHoming(leftLDR, rightLDR, 2.2, homingDistance)
             if ldrLine == 0:
                     position = self.getPositionInCentimeter()
                     ldrPosition = leftLDR.getOffset()
@@ -514,10 +514,12 @@ class DeadReckoningHandler:
             for coord in self.rightCoordinates:
                 file.write(f'{coord[0]:.2f},{coord[1]:.2f}\n')
         print(str(self.angle))
+        self.setPosition(homePosition)
+        self.setAngle(homeAngle)
         
 
     async def moveHoming(self, leftLDR, rightLDR, cutoff = 2.2, homingDistance = 223):
-        rotateIndex = 0
+        rotateIndex = 1
         while True:
 
             leftValue = leftLDR.monitorDigital(cutoff)
