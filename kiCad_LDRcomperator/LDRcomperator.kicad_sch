@@ -1534,6 +1534,12 @@
 		(uuid "2afe445b-dcb7-44db-ad25-e7e17cdcd67b")
 	)
 	(junction
+		(at 189.23 46.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2e0989b8-a0d2-4039-b701-9564a0fe326f")
+	)
+	(junction
 		(at 203.2 107.95)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1569,6 +1575,12 @@
 		(color 0 0 0 0)
 		(uuid "d72abf8d-c918-4fca-b5ba-08c2e0fec851")
 	)
+	(junction
+		(at 173.99 46.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f035b7ef-0258-4d53-9709-0c72fbbc47a7")
+	)
 	(wire
 		(pts
 			(xy 147.32 110.49) (xy 161.29 110.49)
@@ -1588,6 +1600,16 @@
 			(type default)
 		)
 		(uuid "0b6e0766-51a9-49f3-8b54-bd37ad2d804a")
+	)
+	(wire
+		(pts
+			(xy 173.99 34.29) (xy 173.99 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "129cede1-a8a7-4e0f-86d4-2d4d700be15b")
 	)
 	(wire
 		(pts
@@ -1721,6 +1743,16 @@
 	)
 	(wire
 		(pts
+			(xy 189.23 34.29) (xy 189.23 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7dbc8765-f702-44ac-a671-fda5595a9b85")
+	)
+	(wire
+		(pts
 			(xy 128.27 105.41) (xy 161.29 105.41)
 		)
 		(stroke
@@ -1791,6 +1823,16 @@
 	)
 	(wire
 		(pts
+			(xy 189.23 46.99) (xy 189.23 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b7020e5b-0a6a-42ca-86f7-f957a0879695")
+	)
+	(wire
+		(pts
 			(xy 137.16 60.96) (xy 137.16 64.77)
 		)
 		(stroke
@@ -1808,6 +1850,16 @@
 			(type default)
 		)
 		(uuid "c8fab805-b55c-4913-89e5-76683ff77da0")
+	)
+	(wire
+		(pts
+			(xy 173.99 46.99) (xy 173.99 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cd277237-c4aa-4085-ad2e-e01169ab32ba")
 	)
 	(wire
 		(pts
@@ -2151,6 +2203,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+3V3")
+		(at 173.99 34.29 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "22df3079-5a52-41ef-a181-c92d0b381861")
+		(property "Reference" "#PWR016"
+			(at 173.99 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 173.99 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 173.99 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 173.99 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 173.99 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5a2adbcb-b001-4759-be9f-16a738bb83b0")
+		)
+		(instances
+			(project "LDRcomperator"
+				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
+					(reference "#PWR016")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 137.16 85.09 0)
 		(unit 1)
@@ -2423,6 +2541,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 189.23 34.29 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3868493e-83f3-4b3d-b9ea-72aeb47b7aba")
+		(property "Reference" "#PWR010"
+			(at 189.23 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 189.23 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 189.23 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 189.23 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 189.23 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b416bc4e-566d-49c6-8510-656a51d60819")
+		)
+		(instances
+			(project "LDRcomperator"
+				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
+					(reference "#PWR010")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3V3")
 		(at 116.84 97.79 0)
 		(unit 1)
@@ -2483,6 +2667,74 @@
 			(project "LDRcomperator"
 				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
 					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED")
+		(at 185.42 46.99 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3e90908d-4e9e-4cef-8452-5b54e568a5bf")
+		(property "Reference" "D1"
+			(at 187.0075 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "LED"
+			(at 187.0075 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal"
+			(at 185.42 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 185.42 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Light emitting diode"
+			(at 185.42 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "a089c4d7-58d9-4a2f-b053-cea669a18794")
+		)
+		(pin "1"
+			(uuid "59a3ceb4-84b9-4f87-841b-e6a86bccd654")
+		)
+		(instances
+			(project ""
+				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -2573,7 +2825,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "10k ohm"
+		(property "Value" "100k ohm"
 			(at 110.49 77.4699 0)
 			(effects
 				(font
@@ -3106,6 +3358,142 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:LED")
+		(at 185.42 57.15 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b6e2b2d5-f93f-4d70-8ac5-8b929b21839f")
+		(property "Reference" "D2"
+			(at 187.0075 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "LED"
+			(at 187.0075 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal"
+			(at 185.42 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 185.42 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Light emitting diode"
+			(at 185.42 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "49580600-20c6-41b1-99ca-b3eeb39e5503")
+		)
+		(pin "1"
+			(uuid "05fe60bc-bd5c-4ded-8546-851ab7fcf0d9")
+		)
+		(instances
+			(project "LDRcomperator"
+				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
+					(reference "D2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 177.8 46.99 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c1f97296-160c-4279-bcd9-c9b01756c67d")
+		(property "Reference" "R8"
+			(at 177.8 40.64 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "30"
+			(at 177.8 43.18 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal"
+			(at 177.8 48.768 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 177.8 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 177.8 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "baed2276-25ba-4dba-a6dc-1fe11b6c4738")
+		)
+		(pin "2"
+			(uuid "811175c6-af63-47a5-b9f6-495d4553704b")
+		)
+		(instances
+			(project "LDRcomperator"
+				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
+					(reference "R8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_name "MCP6001R_1")
 		(lib_id "Amplifier_Operational:MCP6001R")
 		(at 168.91 80.01 0)
@@ -3217,7 +3605,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2.2k"
+		(property "Value" "22k ohm"
 			(at 121.92 69.8499 0)
 			(effects
 				(font
@@ -3810,6 +4198,74 @@
 			(project "LDRcomperator"
 				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
 					(reference "R5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 177.8 57.15 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ffcf84c1-24a1-4eb7-8473-5fc784b3cbd1")
+		(property "Reference" "R9"
+			(at 177.8 50.8 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "30"
+			(at 177.8 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal"
+			(at 177.8 58.928 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 177.8 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 177.8 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "057611a3-df19-4cc7-9f2f-c7f0e18acf3c")
+		)
+		(pin "2"
+			(uuid "5aa08ded-1f13-42b0-8ebe-9e1e442f7d01")
+		)
+		(instances
+			(project "LDRcomperator"
+				(path "/711413a0-a48d-4e9f-a7fb-d5f98645a20a"
+					(reference "R9")
 					(unit 1)
 				)
 			)
