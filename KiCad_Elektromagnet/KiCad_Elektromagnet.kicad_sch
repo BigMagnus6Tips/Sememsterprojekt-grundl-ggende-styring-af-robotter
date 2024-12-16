@@ -2253,6 +2253,16 @@
 		)
 		(uuid "fc2bd4eb-096b-435d-9d8d-a350e327321a")
 	)
+	(text "0,5217391A"
+		(exclude_from_sim no)
+		(at 132.588 53.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "05dce3e3-97ff-4f59-aa9f-80c09b1bce8a")
+	)
 	(text "GND\n"
 		(exclude_from_sim no)
 		(at 100.33 94.996 0)
@@ -2272,6 +2282,16 @@
 			)
 		)
 		(uuid "49cfa81f-00e5-4011-a561-107fb79c2cf7")
+	)
+	(text "34,5 Ohm\n"
+		(exclude_from_sim no)
+		(at 149.606 53.086 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "673098de-908b-40c5-884f-cfa974175108")
 	)
 	(symbol
 		(lib_id "Connector_Generic_MountingPin:Conn_02x20_Counter_Clockwise_MountingPin")
@@ -2635,7 +2655,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "+5V"
+		(property "Value" "+12V"
 			(at 139.7 33.02 0)
 			(effects
 				(font
