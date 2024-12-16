@@ -12,7 +12,7 @@ class ServoMove:
         self.pwm.freq(frequency)
         self.angle = startAngle
         self.allowedRange = allowedRange
-    def set_angle(self, angle):
+    def setAngle(self, angle):
         """
         Set the servo angle.
         :param angle: Angle in degrees (0 to 180).
@@ -24,7 +24,7 @@ class ServoMove:
         else:
             raise ValueError(f"Angle must be between {self.allowedRange[0]} and {self.allowedRange[1]}")
 
-    async def servo_move_up(self, start_angle, end_angle, step_size, delay):
+    async def servoMoveUp(self, start_angle, end_angle, step_size, delay):
         """
         Move the servo back and forth between start_angle and end_angle.
         :param start_angle: Starting angle (0 to 180).
@@ -41,12 +41,12 @@ class ServoMove:
         try:
             # Move from start_angle to end_angle
             for current_angle in range(start_angle, end_angle, step_size):
-                self.set_angle(current_angle)
+                self.setAngle(current_angle)
                 await asyncio.sleep(delay)
         finally:
             self.deinit()
 
-    async def servo_move_down(self, start_angle, end_angle, step_size, delay):
+    async def servoMoveDown(self, start_angle, end_angle, step_size, delay):
     
         if step_size <= 0:
             raise ValueError("Step size must be a positive integer")
@@ -55,14 +55,14 @@ class ServoMove:
         
         try:
             for current_angle in range(end_angle, start_angle, -step_size):
-                self.set_angle(current_angle)
+                self.setAngle(current_angle)
                 await asyncio.sleep(delay)
                 print(f"Moving down: {current_angle}")
         
         finally:
             self.deinit()
 
-    async def move_to_angle(self, angle, step_size, delay):
+    async def moveToAngle(self, angle, step_size, delay):
         """
         Move the servo to a specific angle.
         :param angle: Target angle (0 to 180).
@@ -78,7 +78,7 @@ class ServoMove:
         if angleDiffrence <0:
             step_size = -step_size
         for current_angle in range(self.angle,angle, step_size):
-            self.set_angle(current_angle)
+            self.setAngle(current_angle)
             await asyncio.sleep(delay)
         
     def deinit(self):
@@ -87,14 +87,21 @@ class ServoMove:
         """
         self.pwm.deinit()
 
-async def goToStart():
-    await servo1.move_to_angle(startAngles[0], 2, 0.05)
-    await servo2.move_to_angle(startAngles[1], 2, 0.05)
-    await servo3.move_to_angle(startAngles[2], 2, 0.05)
-    
+class Crane:
+    def __init__(self, servo1, servo2, servo3, servo4, startAngles = [75, 30, 0, 0]):
+        self.servo1 = servo1
+        self.servo2 = servo2
+        self.servo3 = servo3
+        self.servo4 = servo4
+        self.startAngles = startAngles
 
+    async def goToStart(self):
+        await self.servo1.moveToAngle(self.startAngles[0], 2, 0.05)
+        await self.servo2.moveToAngle(self.startAngles[1], 2, 0.05)
+        await self.servo3.moveToAngle(self.startAngles[2], 2, 0.05)
+        await self.servo4.moveToAngle(self.startAngles[3], 2, 0.05)
 
-async def toggle_electromagnet(pin_number, duration, frequency=1000, duty_cycle=50):
+    async def toggleElectromagnet(self, pin_number, duration, frequency=1000, duty_cycle=50):
         
         electro = PWM(Pin(pin_number, Pin.OUT))
         electro.freq(frequency)
@@ -113,73 +120,72 @@ async def toggle_electromagnet(pin_number, duration, frequency=1000, duty_cycle=
         
         print("electro off")
 
-async def pick_up_bolt():
-    """
-    Create and run servo tasks concurrently.
-    """
-    await asyncio.gather(
-        servo1.move_to_angle(100, 1, 0.05),
-        servo2.move_to_angle(10, 1, 0.1),
-        servo3.move_to_angle(128, 5, 0.05),
-        servo4.move_to_angle(50, 1, 0.05)
-    ) # type: ignore
+    async def pickUpBolt(self):
+        """
+        Create and run servo tasks concurrently.
+        """
+        await asyncio.gather(
+            self.servo1.moveToAngle(100, 1, 0.05),
+            self.servo2.moveToAngle(10, 1, 0.1),
+            self.servo3.moveToAngle(128, 5, 0.05),
+            self.servo4.moveToAngle(50, 1, 0.05)
+        ) # type: ignore
 
-    # Add a short delay before the next group of movements
+        # Add a short delay before the next group of movements
+        
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 0.5, 1000, 50),
+            self.servo1.moveToAngle(110, 2, 0.05),
+        ) # type: ignore
+        
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 1, 1000, 50),
+            self.servo3.moveToAngle(124, 2, 0.05),
+            self.servo4.moveToAngle(35, 2, 0.05)
+        ) # type: ignore
+        
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 1, 1000, 50),
+            self.servo3.moveToAngle(129, 2, 0.05),
+            self.servo4.moveToAngle(70, 2, 0.05)
+        ) # type: ignore
+        
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 1, 1000, 50),
+            self.servo1.moveToAngle(90, 2, 0.05),
+            self.servo3.moveToAngle(137, 2, 0.05),
+            self.servo4.moveToAngle(45, 2, 0.05)
+        ) # type: ignore
+        
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 0.5, 1000, 50),
+            self.servo3.moveToAngle(120, 2, 0.05)
+        ) # type: ignore
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 0.5, 1000, 50),
+            self.servo1.moveToAngle(60, 5, 0.05)
+        ) # type: ignore
+        
+        await asyncio.gather(
+            self.toggleElectromagnet(16, 1.5, 1000, 50),
+            self.servo3.moveToAngle(10, 5, 0.05),
+            self.servo4.moveToAngle(140, 5, 0.05)
+        ) # type: ignore
+        
+        ## Move servos back to their positions concurrently
+        await asyncio.gather(
+            self.servo4.moveToAngle(0, 5, 0.05),
+            self.servo3.moveToAngle(0, 5, 0.05),
+            self.servo2.moveToAngle(30, 5, 0.05),
+            self.servo1.moveToAngle(75, 1, 0.05)
+        ) # type: ignore
     
-    await asyncio.gather(
-        toggle_electromagnet(16, 0.5, 1000, 50),
-        servo1.move_to_angle(110, 2, 0.05),
-    ) # type: ignore
-    
-    await asyncio.gather(
-        toggle_electromagnet(16, 1, 1000, 50),
-        servo3.move_to_angle(124, 2, 0.05),
-        servo4.move_to_angle(35, 2, 0.05)
-    ) # type: ignore
-    
-    await asyncio.gather(
-        toggle_electromagnet(16, 1, 1000, 50),
-        servo3.move_to_angle(129, 2, 0.05),
-        servo4.move_to_angle(70, 2, 0.05)
-    ) # type: ignore
-    
-    await asyncio.gather(
-        toggle_electromagnet(16, 1, 1000, 50),
-        servo1.move_to_angle(90, 2, 0.05),
-        servo3.move_to_angle(137, 2, 0.05),
-        servo4.move_to_angle(45, 2, 0.05)
-    ) # type: ignore
-    
-    await asyncio.gather(
-        toggle_electromagnet(16, 0.5, 1000, 50),
-        servo3.move_to_angle(120, 2, 0.05)
-    ) # type: ignore
-#
-    await asyncio.gather(
-        toggle_electromagnet(16, 0.5, 1000, 50),
-        servo1.move_to_angle(60, 5, 0.05)
-    ) # type: ignore
-    
-    await asyncio.gather(
-        toggle_electromagnet(16, 1.5, 1000, 50),
-        servo3.move_to_angle(10, 5, 0.05),
-        servo4.move_to_angle(140, 5, 0.05)
-    ) # type: ignore
-    
-    ## Move servos back to their positions concurrently
-    await asyncio.gather(
-        servo4.move_to_angle(0, 5, 0.05),
-        servo3.move_to_angle(0, 5, 0.05),
-        servo2.move_to_angle(30, 5, 0.05),
-        servo1.move_to_angle(75, 1, 0.05)
-    ) # type: ignore
-   
-    # Keep the tasks running indefinitely
-    try:
-        while True:
-            await asyncio.sleep(1)
-    except asyncio.CancelledError:
-        print("Shutting down...")
+        # Keep the tasks running indefinitely
+        #try:
+        #    while True:
+        #        await asyncio.sleep(1)
+        #except asyncio.CancelledError:
+        #    print("Shutting down...")
 
 if __name__ == "__main__":
     startAngles = [75, 30, 0, 0]
@@ -188,9 +194,10 @@ if __name__ == "__main__":
     servo3 = ServoMove(12, [0, 180], startAngles[2])
     servo4 = ServoMove(11, [0,180], startAngles[3])
 
+    crane = Crane(servo1, servo2, servo3, servo4)
     try:
-        asyncio.run(goToStart())
-        asyncio.run(pick_up_bolt())
+        asyncio.run(crane.goToStart())
+        asyncio.run(crane.pickUpBolt())
     except KeyboardInterrupt:
-        asyncio.run(goToStart())
+        asyncio.run(crane.goToStart())
         print("Program terminated by user.")
