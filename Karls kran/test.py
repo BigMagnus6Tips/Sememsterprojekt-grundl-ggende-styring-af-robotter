@@ -20,6 +20,7 @@ class ServoMove:
         if self.allowedRange[0] <= angle <= self.allowedRange[1]:
             duty = int(1000 + (angle / 180.0) * 8000)
             self.pwm.duty_u16(duty)
+            self.angle = angle
         else:
             raise ValueError(f"Angle must be between {self.allowedRange[0]} and {self.allowedRange[1]}")
 
@@ -69,18 +70,18 @@ class ServoMove:
         :param step_size: Increment size for each movement.
         :param delay: Delay between each step (in seconds).
         """
+        print(f"moving to angle {angle}")
         if step_size <= 0:
             raise ValueError("Step size must be a positive integer")
 
-        try:
-            # Move to the target angle
-            for current_angle in range(self.angle, angle, step_size):
-                self.set_angle(current_angle)
-                await asyncio.sleep(delay)
-                print(f"Moving to: {current_angle}")
-        finally:
-            print("Something went wrong")
-
+        angleDiffrence = angle - self.angle
+        # Move to the target angle
+        if angleDiffrence <0:
+            step_size = -step_size
+        for current_angle in range(self.angle,angle, step_size):
+            self.set_angle(current_angle)
+            await asyncio.sleep(delay)
+            print(f"Moving to: {current_angle}")
 
     def deinit(self):
         """
@@ -88,31 +89,32 @@ class ServoMove:
         """
         self.pwm.deinit()
 
+async def goToStart():
+    await servo1.move_to_angle(startAngles[0], 2, 0.05)
+    await servo2.move_to_angle(startAngles[1], 2, 0.05)
+    await servo3.move_to_angle(startAngles[2], 2, 0.05)
+    
+
 
 async def start():
     """
     Create and run servo tasks concurrently.
     """
-
-
-
-    """    
-    await servo1.servo_move_up(75, 100, 2, 0.05)
-    await asyncio.sleep(3)
-    await servo2.servo_move_up(10, 12, 2, 0.05)
-    await asyncio.sleep(3)
-    await servo3.servo_move_up(0, 150, 2, 0.05)
+    await servo1.move_to_angle(100, 2, 0.05)
+    await asyncio.sleep(2)
+    await servo2.move_to_angle(10, 2, 0.05)
+    await asyncio.sleep(2)
+    await servo3.move_to_angle(140, 2, 0.05)
+    await asyncio.sleep(2)
+    await servo4.move_to_angle(80, 2, 0.05)
     await asyncio.sleep(5)
-    await servo3.servo_move_down(0, 150, 2, 0.05)
-    await asyncio.sleep(3)
-    await servo2.servo_move_down(10, 12, 2, 0.05)
-    await asyncio.sleep(3)
-    await servo1.servo_move_down(75, 100, 2, 0.05)
-    """
-    #asyncio.create_task(servo1.servo_move(75, 100, 2, 0.05, 5))
-    #asyncio.create_task(servo2.servo_move(30, 100, 2, 0.05, 5))
-    #asyncio.create_task(servo3.servo_move(50, 150, 2, 0.05, 5))
-
+    await servo4.move_to_angle(0, 2, 0.05)
+    await asyncio.sleep(2)
+    await servo3.move_to_angle(0, 2, 0.05)
+    await asyncio.sleep(2)
+    await servo2.move_to_angle(30, 2, 0.05)
+    await asyncio.sleep(2)
+    await servo1.move_to_angle(75, 2, 0.05)
 
     # Keep the tasks running indefinitely
     try:
@@ -122,27 +124,17 @@ async def start():
         print("Shutting down...")
 
 if __name__ == "__main__":
-    startAngles = [75, 30, 50]
-    servo1 = ServoMove(15, [0, 180], startAngles[0])
-    servo2 = ServoMove(16, [0, 180], startAngles[1])
-    servo3 = ServoMove(22, [0, 180], startAngles[2])
-    
-    tasks = [
-    asyncio.create_task(servo1.move_to_angle(startAngles[0], 2, 0.05)),
-    asyncio.create_task(servo2.move_to_angle(startAngles[1], 2, 0.05)),
-    asyncio.create_task(servo3.move_to_angle(startAngles[2], 2, 0.05))
-    ]
-    asyncio.gather(*tasks) # type: ignore
+    startAngles = [75, 30, 0, 0]
+    servo1 = ServoMove(8, [0, 180], startAngles[0])
+    servo2 = ServoMove(9, [0, 180], startAngles[1])
+    servo3 = ServoMove(18, [0, 180], startAngles[2])
+    servo4 = ServoMove(19, [0,180], startAngles[3])
 
 
 
     try:
+        asyncio.run(goToStart())
         asyncio.run(start())
     except KeyboardInterrupt:
-        tasks = [
-        asyncio.create_task(servo1.move_to_angle(startAngles[0], 2, 0.05)),
-        asyncio.create_task(servo2.move_to_angle(startAngles[1], 2, 0.05)),
-        asyncio.create_task(servo3.move_to_angle(startAngles[2], 2, 0.05))
-        ]
-        asyncio.gather(*tasks) # type: ignore
+        asyncio.run(goToStart())
         print("Program terminated by user.")
