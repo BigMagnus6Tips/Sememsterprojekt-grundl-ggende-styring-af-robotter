@@ -1,0 +1,23 @@
+The content of this .zip file is a design for: "PanzaBoard V1.1", an
+interface between a Raspberry Pi-Pico microcontroller, and a set of
+motors and sensors that are suited for educational robotics projects.
+
+This work was financed by University of Southern Denmark's UAS
+section under the label: RoboTronix.
+
+The intended use is education of students attending the Robotics
+education as well as other relevant students at University of Southern
+Denmark (SDU), under supervision by SDU.
+
+PanzaBoard is designed by Anders Stengaard Sørensen.
+
+The design is released under Creative Commons attribution 4.0 License.
+
+
+
+
+
+
+
+
+

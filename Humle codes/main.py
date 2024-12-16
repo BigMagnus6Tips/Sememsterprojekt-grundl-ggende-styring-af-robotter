@@ -11,27 +11,31 @@ async def start():
     #pather.setAngle(90)
     #await pather.moveToPoint([0,29])
     #await car.inPlaceRotation(180)
-    #await pather.moveToPoint([0,99])
+
+    await car.inPlaceRotation(-180)
+    await pather.home(leftMonitor, rightMonitor,[0,0], 90, 243)
+    
+    await pather.moveToPoint([-54,9])
     #print("point 1")
     #print(str(pather.getPositionInCentimeter()) + " " + str(pather.getAngle()))
-    #sleep(1)
-    #await pather.moveToPoint([30,30+99])
+    sleep(1)
+    await pather.moveToPoint([0,0])
     #print("point 2")
-    #sleep(1)
-    #await pather.moveToPoint([30,81+30+99])
+    sleep(1)
+    await pather.moveToPoint([0,-250])
     #print("point 3")
     #sleep(1)
     #await pather.moveToPoint([30,30])
     #sleep(1)
     #await pather.moveToPoint([0,99])
-    #await car.inPlaceRotation(-1.5)
+    
     #multiStepper.stop()
     #while True:
     #    print("left: " + str(leftMonitor.monitorDigital(leftAdcCutoff)) + " right: " + str(rightMonitor.monitorDigital(rightAdcCutoff)))
     #    
     #    await asyncio.sleep(0.1)
     #pather.setAngle(0)
-    await pather.home(leftMonitor, rightMonitor)
+    
 
 
 if __name__ == '__main__':
@@ -68,7 +72,7 @@ if __name__ == '__main__':
     multiStepper = MultiStepper([motorLeft, motorRight])
 
     # Set their delays
-    multiStepper.set_Delays([0.008,0.008])
+    multiStepper.set_Delays([0.007,0.007])
 
 
     # Makes a differentialDriver object
