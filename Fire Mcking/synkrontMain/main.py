@@ -29,16 +29,15 @@ def turnBlack2Off(pin):
     #print("On white2")
     onBlack2 = False
 
-
 def monitorLDRsync():
     global onBlack
     global onBlack2
-    if ldrPin3.value() == 1:
+    if greenLEDInput.value() == 1:
         onBlack2 = True
     else:
         onBlack2 = False
     
-    if ldrPin1.value() == 1:
+    if redLEDInput.value() == 1:
         onBlack = True
     else:
         onBlack = False
@@ -49,7 +48,7 @@ def main():
     
     onBlack2 = False
     onBlack = False
-    maxSpeed = 900 # 600 er limit for koden ca. ved 30 % PWM
+    maxSpeed = 600 # 600 er limit for koden ca. ved 30 % PWM
     resolution = 50
     timeToMaxSpeed = 0.5
     timeForEachResolution = timeToMaxSpeed/resolution
@@ -63,27 +62,32 @@ def main():
         print(i*speedSteps)
         multiStepper.moveSync([i*speedSteps*timeForEachResolution, i*speedSteps*timeForEachResolution])
     
+    resetPin.value(1)
+    resetPin.value(0)
     
     multiStepper.setSyncDelay(1/maxSpeed)
     
-    leftMotorAmountHard = 5
-    rightMotorAmountHard = 45
+    leftMotorAmountHard = 0
+    rightMotorAmountHard = 2
     
-    leftMotorAmountSoft = 1
-    rightMotorAmountSoft = 4
+    leftMotorAmountSoft = 0
+    rightMotorAmountSoft = 2
     counter = 0
     while True:
         monitorLDRsync()
         if onBlack2:
+            while not onBlack:
+                monitorLDRsync()
+                multiStepper.moveSync([leftMotorAmountHard,rightMotorAmountHard])
+            resetPin.value(1)
+            resetPin.value(0)
 
-            multiStepper.moveSync([leftMotorAmountHard,rightMotorAmountHard])
-            
         elif onBlack:
 
             multiStepper.moveSync([leftMotorAmountSoft,rightMotorAmountSoft])
             
         else:
-            if counter%3 == 0:
+            if counter%2 == 0:
                 multiStepper.moveSync([6,5])
             multiStepper.moveSync([2,2])
             counter += 1
@@ -93,7 +97,6 @@ def main():
 
 if __name__ == '__main__':
 
-
     # Makes objects for the motor
     motorRight = StepperMotor(reversed([0,1,2,3]), 0.45, 18000)
     motorLeft = StepperMotor([4,5,6,7], 0.45, 18000)
@@ -101,20 +104,10 @@ if __name__ == '__main__':
 
     # Makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
-
-    ldrPin1 = Pin(28, Pin.IN, Pin.PULL_DOWN)
-    ldrPin2 = Pin(27, Pin.IN, Pin.PULL_DOWN)
-    ldrPin3 = Pin(26, Pin.IN, Pin.PULL_DOWN)
-    ldrPin4 = Pin(19, Pin.IN, Pin.PULL_DOWN)
     
-    #ldrPin1.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOff)
-    #ldrPin2.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOn)
-
-    #ldrPin3.irq(trigger=Pin.IRQ_FALLING, handler=turnBlack2Off)
-    #ldrPin4.irq(trigger=Pin.IRQ_RISING, handler=turnBlack2On)
-
-   
-
+    redLEDInput = Pin(28, Pin.IN, Pin.PULL_DOWN)
+    greenLEDInput = Pin(19, Pin.IN, Pin.PULL_DOWN)
+    resetPin = Pin(18, Pin.OUT)
 
     try:
         main()

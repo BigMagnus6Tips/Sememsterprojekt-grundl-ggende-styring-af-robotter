@@ -154,7 +154,6 @@ class MultiStepper():
             if i < steps[1]:
                 self.stepperMotors[1].step()
             sleep(self.syncDelay)
-        self.stop()
                 
     # Function to stop all motors
     def stop(self):
