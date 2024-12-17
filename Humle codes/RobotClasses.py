@@ -690,43 +690,43 @@ class Crane:
         await uasyncio.gather(
             self.servo1.moveToAngle(100, 1, 0.05),
             self.servo2.moveToAngle(10, 1, 0.1),
-            self.servo3.moveToAngle(128, 5, 0.05),
+            self.servo3.moveToAngle(133, 5, 0.05),
             self.servo4.moveToAngle(50, 1, 0.05)
         ) # type: ignore
 
         # Add a short delay before the next group of movements
         
         await uasyncio.gather(
-            self.toggleElectromagnet(magnet, 0.5, 50),
-            self.servo1.moveToAngle(110, 2, 0.05),
+            self.toggleElectromagnet(magnet, 1, 50),
+            self.servo1.moveToAngle(120, 2, 0.05),
         ) # type: ignore
         
         await uasyncio.gather(
             self.toggleElectromagnet(magnet, 1, 50),
-            self.servo3.moveToAngle(124, 2, 0.05),
+            self.servo3.moveToAngle(132, 2, 0.05),
             self.servo4.moveToAngle(35, 2, 0.05)
         ) # type: ignore
         
         await uasyncio.gather(
             self.toggleElectromagnet(magnet, 1, 50),
-            self.servo3.moveToAngle(129, 2, 0.05),
+            self.servo3.moveToAngle(136, 2, 0.05),
             self.servo4.moveToAngle(70, 2, 0.05)
         ) # type: ignore
         
         await uasyncio.gather(
-            self.toggleElectromagnet(magnet, 1, 50),
-            self.servo1.moveToAngle(90, 2, 0.05),
-            self.servo3.moveToAngle(137, 2, 0.05),
+            self.toggleElectromagnet(magnet, 1.5, 50),
+            self.servo1.moveToAngle(70, 2, 0.05),
+            self.servo3.moveToAngle(124, 2, 0.05),
             self.servo4.moveToAngle(45, 2, 0.05)
         ) # type: ignore
         
         await uasyncio.gather(
             self.toggleElectromagnet(magnet, 0.5, 50),
-            self.servo3.moveToAngle(120, 2, 0.05)
+            self.servo3.moveToAngle(125, 2, 0.05)
         ) # type: ignore
         await uasyncio.gather(
             self.toggleElectromagnet(magnet, 0.5, 50),
-            self.servo1.moveToAngle(60, 5, 0.05)
+            self.servo1.moveToAngle(70, 5, 0.05)
         ) # type: ignore
         
         await uasyncio.gather(
@@ -739,7 +739,7 @@ class Crane:
         await uasyncio.gather(
             self.servo4.moveToAngle(0, 5, 0.05),
             self.servo3.moveToAngle(0, 5, 0.05),
-            self.servo2.moveToAngle(30, 5, 0.05),
+            self.servo2.moveToAngle(0, 5, 0.05),
             self.servo1.moveToAngle(75, 1, 0.05)
         ) # type: ignore
     

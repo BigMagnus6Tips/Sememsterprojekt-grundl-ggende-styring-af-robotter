@@ -15,13 +15,16 @@ async def start():
     #asyncio.create_task(switcher.updateOled())
     #coordIndex = await switcher.waitForStart()
     electro = PWM(Pin(12, Pin.OUT))
-    electro.freq(50)
+    electro.freq(1000)
     electro.duty_u16(0)
-    coordIndex = 1
-    await car.inPlaceRotation(-180)
+    
+    #coordIndex = 1
+    #await car.inPlaceRotation(-180)
     #await pather.home(leftMonitor, rightMonitor,[0,0], 90, 243)
-    await asyncio.sleep(1)
-    await pather.pickupAtPoint(coordsOfBolts[coordIndex],crane, electro)
+    #await asyncio.sleep(1)
+    #await pather.pickupAtPoint(coordsOfBolts[coordIndex],crane, electro)
+    
+    await crane.pickUpBolt(electro)
     
     #await pather.moveToPoint([-54,9])
     #print("point 1")
