@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-0
-=======
-23839634557234618
+23837902446271712
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -84611,13 +84608,6 @@ TO-264-5 Vertical RM 3.81mm
 0
 5
 5
-Pico footprint
-RP_pico
-
-
-0
-40
-40
 Potentiometer_SMD
 Potentiometer_ACP_CA6-VSMD_Vertical
 Potentiometer, vertical, ACP CA6-VSMD, http://www.acptechnologies.com/wp-content/uploads/2017/06/01-ACP-CA6.pdf
@@ -96749,4 +96739,3 @@ Varistor VF
 0
 2
 2
->>>>>>> b8540fdbc3b31293e08b3cd418c62718f1baeb5d

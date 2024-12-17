@@ -29,32 +29,17 @@ def turnBlack2Off(pin):
     #print("On white2")
     onBlack2 = False
 
-
-
-async def monitorLDR():
-    global onBlack
-    global onBlack2
-    while True:
-        if ldrPin3.value() == 1:
-            onBlack2 = True
-        else:
-            onBlack2 = False
-        
-        if ldrPin1.value() == 1:
-            onBlack = True
-        else:
-            onBlack = False
-        await uasyncio.sleep(0.001)
-
 def monitorLDRsync():
     global onBlack
     global onBlack2
-    if ldrPin3.value() == 1:
+    if greenLEDInput.value() == 1:
         onBlack2 = True
+        resetPin.value(1)
+        resetPin.value(0)
     else:
         onBlack2 = False
     
-    if ldrPin1.value() == 1:
+    if redLEDInput.value() == 1:
         onBlack = True
     else:
         onBlack = False
@@ -144,21 +129,12 @@ if __name__ == '__main__':
     # Makes multistepper object with the motors
     multiStepper = MultiStepper([motorLeft, motorRight])
 
-    ldrPin1 = Pin(28, Pin.IN, Pin.PULL_DOWN)
-    ldrPin2 = Pin(27, Pin.IN, Pin.PULL_DOWN)
-    ldrPin3 = Pin(26, Pin.IN, Pin.PULL_DOWN)
-    ldrPin4 = Pin(19, Pin.IN, Pin.PULL_DOWN)
-    
-    #ldrPin1.irq(trigger=Pin.IRQ_FALLING, handler=turnBlackOff)
-    #ldrPin2.irq(trigger=Pin.IRQ_RISING, handler=turnBlackOn)
-
-    #ldrPin3.irq(trigger=Pin.IRQ_FALLING, handler=turnBlack2Off)
-    #ldrPin4.irq(trigger=Pin.IRQ_RISING, handler=turnBlack2On)
+    redLEDInput = Pin(28, Pin.IN, Pin.PULL_DOWN)
+    greenLEDInput = Pin(19, Pin.IN, Pin.PULL_DOWN)
+    resetPin = Pin(18, Pin.OUT)
 
     # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
-
-
 
 
     try:

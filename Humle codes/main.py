@@ -1,7 +1,7 @@
 from machine import Pin, Timer, PWM, ADC
 from time import sleep
 import uasyncio as asyncio
-from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, DeadReckoningHandler
+from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, DeadReckoningHandler, ServoMove, Crane
 
 
 knownLinePositions = []
@@ -45,7 +45,18 @@ if __name__ == '__main__':
 
     alive = False
 
-
+    coordsOfBolts = [[153,108],
+                     [138,67],
+                     [-54,9],
+                     [-136,-67],
+                     [-9,76],
+                     [9,106],
+                     [-9,142],
+                     [9,172],
+                     [-9,206],
+                     [9,238],]
+    
+    pitCoords = [0,-250]
 
     # Adc pin for moonitoring the LDR
     leftAdcPin = 26  # GP26 is labeled as ADC0 on Pico found in the Kicad drawing
@@ -80,6 +91,14 @@ if __name__ == '__main__':
 
     # Makes a deadReckoningHandler object
     pather = DeadReckoningHandler(car)
+
+    startAngles = [75, 30, 0, 0]
+    servo1 = ServoMove(8, [0, 180], startAngles[0])
+    servo2 = ServoMove(9, [0, 180], startAngles[1])
+    servo3 = ServoMove(12, [0, 180], startAngles[2])
+    servo4 = ServoMove(11, [0,180], startAngles[3])
+
+    crane = Crane(servo1, servo2, servo3, servo4, startAngles)
 
     try:
         asyncio.run(start())
