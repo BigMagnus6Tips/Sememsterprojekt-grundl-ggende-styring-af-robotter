@@ -56,8 +56,8 @@ def main():
     
     greenLED = False
     redLED = False
-    maxSpeed = const(800) # 600 er limit for koden ca. ved 30 % PWM
-    maxSpeedDelay = const(0.00125)
+    maxSpeed = const(750) # 600 er limit for koden ca. ved 30 % PWM
+    maxSpeedDelay = const(0.00133)
     hardTurnSpeed = const(600)
     hardTurnDelay = const(0.0016666)
     resolution = const(50)
@@ -75,7 +75,7 @@ def main():
     multiStepper.setSyncDelay(maxSpeedDelay)
     
     leftMotorAmountHard = const(1)
-    rightMotorAmountHard = const(5)
+    rightMotorAmountHard = const(6)
     
     leftMotorAmountSoft = const(1)
     rightMotorAmountSoft = const(7)
