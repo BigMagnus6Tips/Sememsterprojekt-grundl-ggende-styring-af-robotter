@@ -5,9 +5,9 @@ import math
 from OptimizedStepperClasses import StepperMotor, MultiStepper
 
 # Reference voltage for the Pico W
-REFERENCE_VOLTAGE = 3.3
-R2 = 2200  # Known resistor value in the voltage divider circuit. We chose this resistor to get a linear graph between resistance and voltage, so that we could get as big of a span as possible.
-THRESHOLD = 0.75  # Threshold value for the LDR to detect black or white. This value is found by testing the LDR on black and white surfaces and finding the average value between the two. This value is used to determine if the LDR is on black or white surface. The value is between 0 and 1, where 1 is the maximum value the LDR can read, which is the reference voltage.
+REFERENCE_VOLTAGE = const(3.3)
+R2 = const(2200)  # Known resistor value in the voltage divider circuit. We chose this resistor to get a linear graph between resistance and voltage, so that we could get as big of a span as possible.
+THRESHOLD = const(0.75)  # Threshold value for the LDR to detect black or white. This value is found by testing the LDR on black and white surfaces and finding the average value between the two. This value is used to determine if the LDR is on black or white surface. The value is between 0 and 1, where 1 is the maximum value the LDR can read, which is the reference voltage.
  
 def turnBlackOn(pin):
     global redLED
@@ -41,11 +41,12 @@ def monitorLDRsync():
         redLED = True
     else:
         redLED = False
-def rampUp(maxSpeed, resolution, timeToMaxSpeed):
+def rampUp(startSpeed, maxSpeed, resolution, timeToMaxSpeed):
     timeForEachResolution = timeToMaxSpeed/resolution
     speedSteps = maxSpeed/resolution
+    newStartSpeed = startSpeed//speedSteps
     
-    for i in range(1, resolution+1):
+    for i in range(newStartSpeed+1, resolution+1):
         multiStepper.setSyncDelay(1/(i*speedSteps))
         multiStepper.moveSync([i*speedSteps*timeForEachResolution, i*speedSteps*timeForEachResolution])
 
@@ -55,53 +56,55 @@ def main():
     
     greenLED = False
     redLED = False
-    maxSpeed = 600 # 600 er limit for koden ca. ved 30 % PWM
-    hardTurnSpeed = 300
-    resolution = 50
-    timeToMaxSpeed = 0.5
+    maxSpeed = const(800) # 600 er limit for koden ca. ved 30 % PWM
+    maxSpeedDelay = const(0.00125)
+    hardTurnSpeed = const(600)
+    hardTurnDelay = const(0.0016666)
+    resolution = const(50)
+    timeToMaxSpeed = const(0.5)
     
     sleep(1)
     
-    rampUp(maxSpeed, resolution, timeToMaxSpeed)
+    rampUp(0, maxSpeed, resolution, timeToMaxSpeed)
 
     redResetPin.value(1)
     redResetPin.value(0)
     greenResetPin.value(1)
     greenResetPin.value(0)
     
-    multiStepper.setSyncDelay(1/maxSpeed)
+    multiStepper.setSyncDelay(maxSpeedDelay)
     
-    leftMotorAmountHard = 0
-    rightMotorAmountHard = 3
+    leftMotorAmountHard = const(1)
+    rightMotorAmountHard = const(5)
     
-    leftMotorAmountSoft = 0
-    rightMotorAmountSoft = 4
-    counter = 0
+    leftMotorAmountSoft = const(1)
+    rightMotorAmountSoft = const(7)
+    counter = False
     while True:
         monitorLDRsync()
         if greenLED:
-            multiStepper.setSyncDelay(1/hardTurnSpeed)
+            multiStepper.setSyncDelay(hardTurnDelay)
             while not redLED:
                 monitorLDRsync()
                 multiStepper.moveSync([leftMotorAmountHard,rightMotorAmountHard])
-            rampUp(maxSpeed, 5, 0.1)
+            rampUp(300,hardTurnSpeed, 5, 0.2)
             greenResetPin.value(1)
             greenResetPin.value(0)
             monitorLDRsync()
             while not redLED:
                 monitorLDRsync()
                 multiStepper.moveSync([1,0])
-            multiStepper.setSyncDelay(1/maxSpeed)
+            multiStepper.setSyncDelay(maxSpeedDelay)
         elif redLED:
             multiStepper.moveSync([leftMotorAmountSoft,rightMotorAmountSoft])
             redResetPin.value(1)
             redResetPin.value(0)
             
         else:
-            if counter%3 == 0:
+            if counter:
                 multiStepper.moveSync([2,0])
             multiStepper.moveSync([3,3])
-            counter += 1
+            counter = not counter
             #print("turning")
     
 
@@ -109,8 +112,8 @@ def main():
 if __name__ == '__main__':
 
     # Makes objects for the motor
-    motorRight = StepperMotor(reversed([0,1,2,3]), 0.30, 18000)
-    motorLeft = StepperMotor([4,5,6,7], 0.30, 18000)
+    motorRight = StepperMotor(reversed([0,1,2,3]), 0.35, 18000)
+    motorLeft = StepperMotor([4,5,6,7], 0.35, 18000)
 
 
     # Makes multistepper object with the motors
