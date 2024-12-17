@@ -191,7 +191,7 @@ if __name__ == "__main__":
     startAngles = [75, 30, 0, 0]
     servo1 = ServoMove(8, [0, 180], startAngles[0])
     servo2 = ServoMove(9, [0, 180], startAngles[1])
-    servo3 = ServoMove(12, [0, 180], startAngles[2])
+    servo3 = ServoMove(10, [0, 180], startAngles[2])
     servo4 = ServoMove(11, [0,180], startAngles[3])
 
     crane = Crane(servo1, servo2, servo3, servo4)
