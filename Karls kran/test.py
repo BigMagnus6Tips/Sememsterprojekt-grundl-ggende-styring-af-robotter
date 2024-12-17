@@ -127,41 +127,41 @@ async def pick_up_bolt():
     # Add a short delay before the next group of movements
     
     await asyncio.gather(
-        toggle_electromagnet(16, 0.5, 1000, 50),
+        toggle_electromagnet(12, 0.5, 1000, 50),
         servo1.move_to_angle(110, 2, 0.05),
     ) # type: ignore
     
     await asyncio.gather(
-        toggle_electromagnet(16, 1, 1000, 50),
+        toggle_electromagnet(12, 1, 1000, 50),
         servo3.move_to_angle(124, 2, 0.05),
         servo4.move_to_angle(35, 2, 0.05)
     ) # type: ignore
     
     await asyncio.gather(
-        toggle_electromagnet(16, 1, 1000, 50),
+        toggle_electromagnet(12, 1, 1000, 50),
         servo3.move_to_angle(129, 2, 0.05),
         servo4.move_to_angle(70, 2, 0.05)
     ) # type: ignore
     
     await asyncio.gather(
-        toggle_electromagnet(16, 1, 1000, 50),
+        toggle_electromagnet(12, 1, 1000, 50),
         servo1.move_to_angle(90, 2, 0.05),
         servo3.move_to_angle(137, 2, 0.05),
         servo4.move_to_angle(45, 2, 0.05)
     ) # type: ignore
     
     await asyncio.gather(
-        toggle_electromagnet(16, 0.5, 1000, 50),
+        toggle_electromagnet(12, 0.5, 1000, 50),
         servo3.move_to_angle(120, 2, 0.05)
     ) # type: ignore
 #
     await asyncio.gather(
-        toggle_electromagnet(16, 0.5, 1000, 50),
+        toggle_electromagnet(12, 0.5, 1000, 50),
         servo1.move_to_angle(60, 5, 0.05)
     ) # type: ignore
     
     await asyncio.gather(
-        toggle_electromagnet(16, 1.5, 1000, 50),
+        toggle_electromagnet(12, 1.5, 1000, 50),
         servo3.move_to_angle(10, 5, 0.05),
         servo4.move_to_angle(140, 5, 0.05)
     ) # type: ignore
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     startAngles = [75, 30, 0, 0]
     servo1 = ServoMove(8, [0, 180], startAngles[0])
     servo2 = ServoMove(9, [0, 180], startAngles[1])
-    servo3 = ServoMove(12, [0, 180], startAngles[2])
+    servo3 = ServoMove(10, [0, 180], startAngles[2])
     servo4 = ServoMove(11, [0,180], startAngles[3])
 
     try:

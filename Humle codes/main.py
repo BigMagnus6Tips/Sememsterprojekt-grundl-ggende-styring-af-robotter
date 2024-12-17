@@ -24,7 +24,7 @@ async def start():
     #await pather.moveToPoint([30,30])
     #sleep(1)
     #await pather.moveToPoint([0,99])
-    await car.inPlaceRotation(-3.4)
+    await car.inPlaceRotation(-180)
     #multiStepper.stop()
     #while True:
     #    print("left: " + str(leftMonitor.monitorDigital(leftAdcCutoff)) + " right: " + str(rightMonitor.monitorDigital(rightAdcCutoff)))
