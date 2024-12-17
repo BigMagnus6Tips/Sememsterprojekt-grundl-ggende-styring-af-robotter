@@ -2,6 +2,7 @@ from machine import Pin, Timer, PWM, ADC
 import uasyncio
 import math
 from time import sleep
+from ssd1306_OLED import SSD1306_I2C
 
 class StepperMotor:
     
@@ -419,11 +420,13 @@ class MonitorClass:
     
     
 class DeadReckoningHandler:
-    def __init__(self, DifferentialDriver, position = [0, 0], angle = 0):
+    def __init__(self, DifferentialDriver, position = [0, 0], angle = 0, boltDistance = 32.5, forwardDelay = 0.002, rotationDelay = 0.01):
         self.diffdriver = DifferentialDriver
         self.position = position
         self.angle = angle
-    
+        self.boltDistance = boltDistance
+        self.forwardDelay = forwardDelay
+        self.rotationDelay = rotationDelay
 
 
 
@@ -431,12 +434,25 @@ class DeadReckoningHandler:
         stepsToTake = self.diffdriver.inPlaceRotationDegreesToSteps(angle, self.diffdriver.multiStepper.getModes()[0])
         deltaAngle =  self.diffdriver.inPlaceRotationStepstoDegrees(stepsToTake, self.diffdriver.multiStepper.getModes()[0])
         self.angle += deltaAngle
+        self.diffdriver.multiStepper.set_Delays([self.rotationDelay, self.rotationDelay])
         await self.diffdriver.inPlaceRotation(deltaAngle)
 
     async def goForwardInSteps(self, steps):
         self.position[0] += steps * math.cos(self.angle*math.pi/180)
         self.position[1] += steps * math.sin(self.angle*math.pi/180)
-        await self.diffdriver.goForward(steps)
+        #self.diffdriver.multiStepper.set_Delays([self.forwardDelay, self.forwardDelay])
+
+        if steps > 550:
+            for i in reversed(range(10)):
+                self.diffdriver.multiStepper.set_Delays([self.forwardDelay*(i+1), self.forwardDelay*(i+1)])
+                await self.diffdriver.goForward(100-10*(i))
+            self.diffdriver.multiStepper.set_Delays([self.forwardDelay, self.forwardDelay])
+            await self.diffdriver.goForward(steps-550)
+        elif steps <= 550:
+            self.diffdriver.multiStepper.set_Delays([self.rotationDelay, self.rotationDelay])
+            await self.diffdriver.goForward(steps)
+        
+        
 
 
     def getPosition(self):
@@ -464,18 +480,26 @@ class DeadReckoningHandler:
             angle += 360
 
         await self.rotate(angle)
-        await uasyncio.sleep(0.5)
+        await uasyncio.sleep(1)
         await self.goForwardInSteps(self.diffdriver.distanceToSteps(math.sqrt(distance[0]**2 + distance[1]**2),self.diffdriver.multiStepper.getModes()[0]))
     
     async def moveToPolar(self, distance, angle):
         await self.rotate(angle - self.angle)
-        await uasyncio.sleep(0.5)
+        await uasyncio.sleep(1)
         await self.goForwardInSteps(self.diffdriver.distanceToSteps(distance,self.diffdriver.multiStepper.getModes()[0]))
     
-    async def pickupAtPoint(self, point, crane = None):
-        #moves the robot to 30 cm before the point, then moves the crane down and picks up the object
-        newPoint = [point[0] - 30*math.cos(self.angle*math.pi/180), point[1] - 30*math.sin(self.angle*math.pi/180)]
+    async def pickupAtPoint(self, point, crane = None, magnet = None):
+        angle = math.atan2(point[1], point[0])*(360/(2 *math.pi))
+        newPoint = [point[0] - self.boltDistance*math.cos(angle*math.pi/180), point[1] - self.boltDistance*math.sin(angle*math.pi/180)]
+        await uasyncio.sleep(1)
         await self.moveToPoint(newPoint)
+        if crane != None:
+            await crane.pickUpBolt(magnet)
+        await self.moveToPoint([0,0])
+        await uasyncio.sleep(1)
+        await self.moveToPoint([0,-250])
+
+
         
 
 
@@ -483,23 +507,23 @@ class DeadReckoningHandler:
         self.leftCoordinates = []
         self.rightCoordinates = []
         
-        testNumberOfDots = 10
+        testNumberOfDots = 1000
         
         for _ in range(testNumberOfDots):
-            ldrLine = await self.moveHoming(leftLDR, rightLDR)
+            ldrLine = await self.moveHoming(leftLDR, rightLDR, 2.2, homingDistance)
             if ldrLine == 0:
                     position = self.getPositionInCentimeter()
                     ldrPosition = leftLDR.getOffset()
                     self.leftCoordinates.append([position[0]+ldrPosition[0]*math.cos(self.getAngle()*math.pi/180)-position[1]+ldrPosition[1]*math.sin(self.getAngle()*math.pi/180),
                                                 position[1]+ldrPosition[0]*math.sin(self.getAngle()*math.pi/180)+position[1]+ldrPosition[1]*math.cos(self.getAngle()*math.pi/180)])
-                    await self.rotate(3)
+                    await self.rotate(1)
         
             elif ldrLine == 1:
                     position = self.getPositionInCentimeter()
                     ldrPosition = rightLDR.getOffset()
                     self.rightCoordinates.append([position[0]+ldrPosition[0]*math.cos(self.getAngle()*math.pi/180)-position[1]+ldrPosition[1]*math.sin(self.getAngle()*math.pi/180),
                                                 position[1]+ldrPosition[0]*math.sin(self.getAngle()*math.pi/180)+position[1]+ldrPosition[1]*math.cos(self.getAngle()*math.pi/180)])
-                    await self.rotate(-3)
+                    await self.rotate(-1)
             elif ldrLine == 2:
                 print("Homing done")
                 break
@@ -514,10 +538,12 @@ class DeadReckoningHandler:
             for coord in self.rightCoordinates:
                 file.write(f'{coord[0]:.2f},{coord[1]:.2f}\n')
         print(str(self.angle))
+        self.setPosition(homePosition)
+        self.setAngle(homeAngle)
         
 
     async def moveHoming(self, leftLDR, rightLDR, cutoff = 2.2, homingDistance = 223):
-        rotateIndex = 0
+        
         while True:
 
             leftValue = leftLDR.monitorDigital(cutoff)
@@ -529,9 +555,6 @@ class DeadReckoningHandler:
             elif self.position[0]**2+self.position[1]**2 > (self.diffdriver.distanceToSteps(homingDistance, self.diffdriver.multiStepper.getModes()[0]))**2:
                 print((self.position[0]**2+self.position[1]**2)**0.5)
                 return 2 
-            rotateIndex += 1
-            if rotateIndex%100 == 0:
-                await self.rotate(1)
 
             await self.goForwardInSteps(1)
             await uasyncio.sleep(0.0001)
@@ -539,3 +562,238 @@ class DeadReckoningHandler:
 
     async def turnHoming(self, leftLDR, rightLDR):
         pass 
+
+
+
+class ServoMove:
+    def __init__(self, pin, allowedRange, startAngle, frequency=50, ):
+        """
+        Initialize the servo motor with PWM control.
+        :param pin: GPIO pin connected to the servo.
+        :param frequency: PWM frequency (default 50 Hz for servos).
+        """
+        self.pwm = PWM(Pin(pin))
+        self.pwm.freq(frequency)
+        self.angle = startAngle
+        self.allowedRange = allowedRange
+        
+    def setAngle(self, angle):
+        """
+        Set the servo angle.
+        :param angle: Angle in degrees (0 to 180).
+        """
+        if self.allowedRange[0] <= angle <= self.allowedRange[1]:
+            duty = int(1000 + (angle / 180.0) * 8000)
+            self.pwm.duty_u16(duty)
+            self.angle = angle
+        else:
+            raise ValueError(f"Angle must be between {self.allowedRange[0]} and {self.allowedRange[1]}")
+
+    async def servoMoveUp(self, start_angle, end_angle, step_size, delay):
+        """
+        Move the servo back and forth between start_angle and end_angle.
+        :param start_angle: Starting angle (0 to 180).
+        :param end_angle: Ending angle (0 to 180).
+        :param step_size: Increment size for each movement.
+        :param delay: Delay between each step (in seconds).
+        :param task_delay: Pause before reversing the motion (in seconds).
+        """
+        if step_size <= 0:
+            raise ValueError("Step size must be a positive integer")
+        if start_angle >= end_angle:
+            raise ValueError("Start angle must be less than end angle")
+
+        try:
+            # Move from start_angle to end_angle
+            for current_angle in range(start_angle, end_angle, step_size):
+                self.setAngle(current_angle)
+                await uasyncio.sleep(delay)
+        finally:
+            self.deinit()
+
+    async def servoMoveDown(self, start_angle, end_angle, step_size, delay):
+    
+        if step_size <= 0:
+            raise ValueError("Step size must be a positive integer")
+        if start_angle >= end_angle:
+            raise ValueError("Start angle must be less than end angle")
+        
+        try:
+            for current_angle in range(end_angle, start_angle, -step_size):
+                self.setAngle(current_angle)
+                await uasyncio.sleep(delay)
+                print(f"Moving down: {current_angle}")
+        
+        finally:
+            self.deinit()
+
+    async def moveToAngle(self, angle, step_size, delay):
+        """
+        Move the servo to a specific angle.
+        :param angle: Target angle (0 to 180).
+        :param step_size: Increment size for each movement.
+        :param delay: Delay between each step (in seconds).
+        """
+        print(f"moving to angle {angle}")
+        if step_size <= 0:
+            raise ValueError("Step size must be a positive integer")
+
+        angleDiffrence = angle - self.angle
+        # Move to the target angle
+        if angleDiffrence <0:
+            step_size = -step_size
+        for current_angle in range(self.angle,angle, step_size):
+            self.setAngle(current_angle)
+            await uasyncio.sleep(delay)
+        
+    def deinit(self):
+        """
+        Deinitialize the PWM to release the GPIO pin.
+        """
+        self.pwm.deinit()
+
+class Crane:
+    def __init__(self, servo1, servo2, servo3, servo4, startAngles = [75, 30, 0, 0]):
+        self.servo1 = servo1
+        self.servo2 = servo2
+        self.servo3 = servo3
+        self.servo4 = servo4
+        self.startAngles = startAngles
+
+    async def goToStart(self):
+        await self.servo1.moveToAngle(self.startAngles[0], 2, 0.05)
+        await self.servo2.moveToAngle(self.startAngles[1], 2, 0.05)
+        await self.servo3.moveToAngle(self.startAngles[2], 2, 0.05)
+        await self.servo4.moveToAngle(self.startAngles[3], 2, 0.05)
+
+    async def toggleElectromagnet(self, electro, duration, duty_cycle=50):
+        
+        
+        
+        duty_u16 = int(duty_cycle / 100 * 65535)
+
+
+        print("electro on")
+        
+        electro.duty_u16(duty_u16)
+
+        await uasyncio.sleep(duration)
+
+        electro.duty_u16(0)
+        
+        print("electro off")
+
+    async def pickUpBolt(self, magnet):
+        """
+        Create and run servo tasks concurrently.
+        """
+        await uasyncio.gather(
+            self.servo1.moveToAngle(100, 1, 0.05),
+            self.servo2.moveToAngle(10, 1, 0.1),
+            self.servo3.moveToAngle(128, 5, 0.05),
+            self.servo4.moveToAngle(50, 1, 0.05)
+        ) # type: ignore
+
+        # Add a short delay before the next group of movements
+        
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 0.5, 50),
+            self.servo1.moveToAngle(110, 2, 0.05),
+        ) # type: ignore
+        
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 1, 50),
+            self.servo3.moveToAngle(124, 2, 0.05),
+            self.servo4.moveToAngle(35, 2, 0.05)
+        ) # type: ignore
+        
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 1, 50),
+            self.servo3.moveToAngle(129, 2, 0.05),
+            self.servo4.moveToAngle(70, 2, 0.05)
+        ) # type: ignore
+        
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 1, 50),
+            self.servo1.moveToAngle(90, 2, 0.05),
+            self.servo3.moveToAngle(137, 2, 0.05),
+            self.servo4.moveToAngle(45, 2, 0.05)
+        ) # type: ignore
+        
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 0.5, 50),
+            self.servo3.moveToAngle(120, 2, 0.05)
+        ) # type: ignore
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 0.5, 50),
+            self.servo1.moveToAngle(60, 5, 0.05)
+        ) # type: ignore
+        
+        await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 1.5, 50),
+            self.servo3.moveToAngle(10, 5, 0.05),
+            self.servo4.moveToAngle(140, 5, 0.05)
+        ) # type: ignore
+        
+        ## Move servos back to their positions concurrently
+        await uasyncio.gather(
+            self.servo4.moveToAngle(0, 5, 0.05),
+            self.servo3.moveToAngle(0, 5, 0.05),
+            self.servo2.moveToAngle(30, 5, 0.05),
+            self.servo1.moveToAngle(75, 1, 0.05)
+        ) # type: ignore
+    
+        # Keep the tasks running indefinitely
+        #try:
+        #    while True:
+        #        await asyncio.sleep(1)
+        #except asyncio.CancelledError:
+        #    print("Shutting down...")
+
+class Switcher:
+
+    def __init__(self, pinUp, pinDown, pinStart):
+        self.switchUp = Pin(pinUp, Pin.IN, Pin.PULL_UP)
+        irqUp = self.switchUp.irq(trigger=Pin.IRQ_FALLING, handler=self.upHandler)
+        self.switchDown = Pin(pinDown, Pin.IN, Pin.PULL_UP)
+        irqDown = self.switchDown.irq(trigger=Pin.IRQ_FALLING, handler=self.downHandler)
+        self.switchStart = Pin(pinStart, Pin.IN, Pin.PULL_UP)
+        irqStart = self.switchStart.irq(trigger=Pin.IRQ_FALLING, handler=self.startHandler)
+        self.choice = 1
+        self.begin = False
+
+
+
+    
+    def addOled(self, oled):
+        self.oled = oled
+
+    async def updateOled(self):
+        
+        self.oled.fill(0)
+        self.oled.text("Choice: " + str(self.choice), 0, 0)
+        self.oled.show()
+    
+    def upHandler(self, pin):
+        self.choice += 1
+        if self.choice > 3:
+            self.choice = 1
+    
+    def downHandler(self, pin):
+        self.choice -= 1
+        if self.choice < 1:
+            self.choice = 3
+    
+    def startHandler(self, pin):
+        print("Start pressed")
+        print(self.choice)
+        self.begin = True
+    
+    async def waitForStart(self):
+        while True:
+            await self.updateOled()
+            if self.begin:
+                break
+            await uasyncio.sleep(0.5)
+        self.begin = False
+        return self.choice

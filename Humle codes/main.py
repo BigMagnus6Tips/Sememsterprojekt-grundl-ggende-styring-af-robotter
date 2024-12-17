@@ -1,7 +1,8 @@
-from machine import Pin, Timer, PWM, ADC
+from machine import Pin, Timer, PWM, ADC, I2C
 from time import sleep
 import uasyncio as asyncio
-from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, DeadReckoningHandler
+from RobotClasses import StepperMotor, MultiStepper, DifferentialDriver, MonitorClass, DeadReckoningHandler, ServoMove, Crane, Switcher
+from ssd1306_OLED import SSD1306_I2C
 
 
 knownLinePositions = []
@@ -11,27 +12,38 @@ async def start():
     #pather.setAngle(90)
     #await pather.moveToPoint([0,29])
     #await car.inPlaceRotation(180)
-    #await pather.moveToPoint([0,99])
+    #asyncio.create_task(switcher.updateOled())
+    #coordIndex = await switcher.waitForStart()
+    electro = PWM(Pin(12, Pin.OUT))
+    electro.freq(50)
+    electro.duty_u16(0)
+    coordIndex = 1
+    await car.inPlaceRotation(-180)
+    #await pather.home(leftMonitor, rightMonitor,[0,0], 90, 243)
+    await asyncio.sleep(1)
+    await pather.pickupAtPoint(coordsOfBolts[coordIndex],crane, electro)
+    
+    #await pather.moveToPoint([-54,9])
     #print("point 1")
     #print(str(pather.getPositionInCentimeter()) + " " + str(pather.getAngle()))
     #sleep(1)
-    #await pather.moveToPoint([30,30+99])
+    #await pather.moveToPoint([0,0])
     #print("point 2")
     #sleep(1)
-    #await pather.moveToPoint([30,81+30+99])
+    #await pather.moveToPoint([0,-250])
     #print("point 3")
     #sleep(1)
     #await pather.moveToPoint([30,30])
     #sleep(1)
     #await pather.moveToPoint([0,99])
-    await car.inPlaceRotation(-180)
+    
     #multiStepper.stop()
     #while True:
     #    print("left: " + str(leftMonitor.monitorDigital(leftAdcCutoff)) + " right: " + str(rightMonitor.monitorDigital(rightAdcCutoff)))
     #    
     #    await asyncio.sleep(0.1)
     #pather.setAngle(0)
-    #await pather.home(leftMonitor, rightMonitor)
+    
 
 
 if __name__ == '__main__':
@@ -41,7 +53,18 @@ if __name__ == '__main__':
 
     alive = False
 
-
+    coordsOfBolts = [[152,111],
+                     [134,70],
+                     [-55,9],
+                     [-137,-69],
+                     [-9,76],
+                     [9,106],
+                     [-9,142],
+                     [9,172],
+                     [-9,206],
+                     [9,238],]
+    
+    pitCoords = [0,-250]
 
     # Adc pin for moonitoring the LDR
     leftAdcPin = 26  # GP26 is labeled as ADC0 on Pico found in the Kicad drawing
@@ -68,14 +91,39 @@ if __name__ == '__main__':
     multiStepper = MultiStepper([motorLeft, motorRight])
 
     # Set their delays
-    multiStepper.set_Delays([0.02,0.02])
+    multiStepper.set_Delays([0.003,0.003])
 
 
     # Makes a differentialDriver object
     car = DifferentialDriver(multiStepper)
 
     # Makes a deadReckoningHandler object
-    pather = DeadReckoningHandler(car)
+    pather = DeadReckoningHandler(car, [0,0], 0, 33.5)
+
+    startAngles = [75, 30, 0, 0]
+    servo1 = ServoMove(8, [0, 180], startAngles[0])
+    servo2 = ServoMove(9, [0, 180], startAngles[1])
+    servo3 = ServoMove(10, [0, 180], startAngles[2])
+    servo4 = ServoMove(11, [0,180], startAngles[3])
+
+    magnetpin = 12
+
+    electro = PWM(Pin(magnetpin, Pin.OUT))
+    electro.freq(1000)
+    electro.duty_u16(0)
+    
+    crane = Crane(servo1, servo2, servo3, servo4, startAngles)
+
+    pinUp = 13
+    pinDown = 18
+    pinStart = 19
+
+    switcher = Switcher(pinUp, pinDown, pinStart)
+
+    #oledI2C = I2C(0, scl=Pin(17), sda=Pin(16))
+    #oled = SSD1306_I2C(128, 64, oledI2C)
+
+    #switcher.addOled(oled)
 
     try:
         asyncio.run(start())
