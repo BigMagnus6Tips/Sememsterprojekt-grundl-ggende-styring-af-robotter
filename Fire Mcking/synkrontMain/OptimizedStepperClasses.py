@@ -155,7 +155,24 @@ class MultiStepper():
                 self.stepperMotors[1].step()
             sleep(self.syncDelay)
         self.stop()
-                
+
+    def move_Stepper(self, steps):
+        # checks the direction to go
+        if steps >= 0:
+            self.forward = True
+        else:
+            self.forward = False
+            # makes the steps positive if negative to go thgough it in a for loop
+            steps = -steps
+            
+        for i in range(steps):
+                    if i < steps[0]:
+                        self.stepperMotors[0].step()
+                    if i < steps[1]:
+                        self.stepperMotors[1].step()
+                    sleep(self.syncDelay)
+            # sets the PWM duty cycle to 0 to make sure current does not run after use
+        
     # Function to stop all motors
     def stop(self):
         for motor in self.stepperMotors:

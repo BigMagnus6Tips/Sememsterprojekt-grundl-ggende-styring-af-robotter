@@ -56,64 +56,59 @@ def main():
     
     greenLED = False
     redLED = False
-    maxSpeed = const(710) # 600 er limit for koden ca. ved 30 % PWM
+    maxSpeed = const(1000) # 600 er limit for koden ca. ved 30 % PWM
     maxSpeedDelay = const(0.001408)
     hardTurnSpeed = const(570)
     hardTurnDelay = const(0.001754)
     resolution = const(50)
     timeToMaxSpeed = const(0.5)
     
-    sleep(1)
+    sleep(2)
     
-    rampUp(0, maxSpeed, resolution, timeToMaxSpeed)
+    #rampUp(0, maxSpeed, resolution, timeToMaxSpeed)
 
     redResetPin.value(1)
     redResetPin.value(0)
     greenResetPin.value(1)
     greenResetPin.value(0)
     
-    multiStepper.setSyncDelay(maxSpeedDelay)
+    multiStepper.setSyncDelay(1/maxSpeed)
     
     leftMotorAmountHard = const(1)
     rightMotorAmountHard = const(6)
     
     leftMotorAmountSoft = const(1)
     rightMotorAmountSoft = const(7)
-    counter = False
-    while True:
+    counter = 0
+
+    redResetPin.value(1)
+    redResetPin.value(0)
+    rampUp(0, maxSpeed, resolution, timeToMaxSpeed)
+    multiStepper.moveSync([4400,4400])
+    multiStepper.moveSync([600,0])
+    multiStepper.moveSync([5000,5000])
+
+
+    """while True:
         monitorLDRsync()
-        if greenLED:
-            multiStepper.setSyncDelay(hardTurnDelay)
-            while not redLED:
-                monitorLDRsync()
-                multiStepper.moveSync([leftMotorAmountHard,rightMotorAmountHard])
-            rampUp(250,hardTurnSpeed, 5, 0.2)
-            greenResetPin.value(1)
-            greenResetPin.value(0)
-            monitorLDRsync()
-            while not redLED:
-                monitorLDRsync()
-                multiStepper.moveSync([1,0])
-            multiStepper.setSyncDelay(maxSpeedDelay)
-        elif redLED:
-            multiStepper.moveSync([leftMotorAmountSoft,rightMotorAmountSoft])
+        if redLED:
+            multiStepper.moveSync([0,1])
             redResetPin.value(1)
-            redResetPin.value(0)
-            
+            redResetPin.value(0)  
         else:
-            if counter:
-                multiStepper.moveSync([2,0])
+            if counter%3 == 0:
+                multiStepper.moveSync([1,0])
             multiStepper.moveSync([3,3])
-            counter = not counter
-            #print("turning")
+            counter =+ 1
+            #print("turning")"""
     
 
 
 if __name__ == '__main__':
 
     # Makes objects for the motor
-    motorRight = StepperMotor(reversed([0,1,2,3]), 0.35, 18000)
-    motorLeft = StepperMotor([4,5,6,7], 0.35, 18000)
+    motorRight = StepperMotor(reversed([0,1,2,3]), 0.6, 18000)
+    motorLeft = StepperMotor([4,5,6,7], 0.6, 18000)
 
 
     # Makes multistepper object with the motors
