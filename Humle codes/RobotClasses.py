@@ -449,7 +449,7 @@ class DeadReckoningHandler:
             self.diffdriver.multiStepper.set_Delays([self.forwardDelay, self.forwardDelay])
             await self.diffdriver.goForward(steps-550)
         elif steps <= 550:
-            self.diffdriver.multiStepper.set_Delays([self.rotationDelay, self.rotationDelay])
+            self.diffdriver.multiStepper.set_Delays([self.rotationDelay/4, self.rotationDelay/4])
             await self.diffdriver.goForward(steps)
         
         
@@ -682,15 +682,37 @@ class Crane:
         electro.duty_u16(0)
         
         print("electro off")
+        
+    async def PimpMyRide(self):
+        while True:
+            await uasyncio.sleep(2)
+            
+            await uasyncio.gather(
+                self.servo1.moveToAngle(100, 1, 0.05),
+                self.servo2.moveToAngle(20, 1, 0.1),
+                self.servo3.moveToAngle(132, 5, 0.05),
+                self.servo4.moveToAngle(50, 1, 0.05)
+            ) # type: ignore
+            
+            await uasyncio.sleep(2)
+            
+            await uasyncio.gather(
+                self.servo4.moveToAngle(0, 5, 0.05),
+                self.servo3.moveToAngle(0, 5, 0.05),
+                self.servo2.moveToAngle(0, 5, 0.05),
+                self.servo1.moveToAngle(75, 1, 0.05)
+            ) # type: ignore
+        
 
     async def pickUpBolt(self, magnet):
         """
         Create and run servo tasks concurrently.
         """
         await uasyncio.gather(
+            self.toggleElectromagnet(magnet, 3, 50),
             self.servo1.moveToAngle(100, 1, 0.05),
             self.servo2.moveToAngle(10, 1, 0.1),
-            self.servo3.moveToAngle(133, 5, 0.05),
+            self.servo3.moveToAngle(132, 5, 0.05),
             self.servo4.moveToAngle(50, 1, 0.05)
         ) # type: ignore
 
@@ -752,15 +774,16 @@ class Crane:
 
 class Switcher:
 
-    def __init__(self, pinUp, pinDown, pinStart):
+    def __init__(self, pinUp, pinDown, pinStart, endIndex):
         self.switchUp = Pin(pinUp, Pin.IN, Pin.PULL_UP)
         irqUp = self.switchUp.irq(trigger=Pin.IRQ_FALLING, handler=self.upHandler)
         self.switchDown = Pin(pinDown, Pin.IN, Pin.PULL_UP)
         irqDown = self.switchDown.irq(trigger=Pin.IRQ_FALLING, handler=self.downHandler)
         self.switchStart = Pin(pinStart, Pin.IN, Pin.PULL_UP)
         irqStart = self.switchStart.irq(trigger=Pin.IRQ_FALLING, handler=self.startHandler)
-        self.choice = 1
+        self.choice = 0
         self.begin = False
+        self.endIndex = endIndex
 
 
 
@@ -771,18 +794,21 @@ class Switcher:
     async def updateOled(self):
         
         self.oled.fill(0)
-        self.oled.text("Choice: " + str(self.choice), 0, 0)
+        if self.choice == self.endIndex:
+            self.oled.text("Choice: end program", 0, 0)
+        else:
+            self.oled.text("Choice: " + str(self.choice), 0, 0)
         self.oled.show()
     
     def upHandler(self, pin):
         self.choice += 1
-        if self.choice > 3:
-            self.choice = 1
+        if self.choice > self.endIndex:
+            self.choice = 0
     
     def downHandler(self, pin):
         self.choice -= 1
-        if self.choice < 1:
-            self.choice = 3
+        if self.choice < 0:
+            self.choice = self.endIndex
     
     def startHandler(self, pin):
         print("Start pressed")
