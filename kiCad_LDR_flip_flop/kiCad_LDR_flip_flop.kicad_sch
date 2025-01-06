@@ -1933,7 +1933,7 @@
 	)
 	(wire
 		(pts
-			(xy 186.69 124.46) (xy 186.69 140.97)
+			(xy 189.23 124.46) (xy 189.23 132.08)
 		)
 		(stroke
 			(width 0)
@@ -1943,7 +1943,7 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 124.46) (xy 186.69 124.46)
+			(xy 194.31 124.46) (xy 189.23 124.46)
 		)
 		(stroke
 			(width 0)
@@ -2000,16 +2000,6 @@
 			(type default)
 		)
 		(uuid "63943dbc-7d1a-4eec-8498-4661205ad181")
-	)
-	(wire
-		(pts
-			(xy 180.34 140.97) (xy 180.34 132.08)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6d99cde7-2af7-4610-b07e-58bd6b0c5e29")
 	)
 	(wire
 		(pts
@@ -2073,23 +2063,13 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 132.08) (xy 167.64 132.08)
+			(xy 167.64 132.08) (xy 189.23 132.08)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "c2d84f72-897c-4115-b5fa-f522826359ef")
-	)
-	(wire
-		(pts
-			(xy 186.69 140.97) (xy 180.34 140.97)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c48c1aa7-c3c6-45d8-a4c8-29ac6f02918f")
 	)
 	(wire
 		(pts
@@ -2225,7 +2205,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "04679fce-75a4-4417-99b8-f98f77b72be8")
 		(property "Reference" "#PWR08"
 			(at 115.57 110.49 0)
@@ -2237,7 +2216,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 115.57 119.38 0)
+			(at 114.046 118.872 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2302,7 +2281,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 160.274 107.188 0)
+			(at 161.036 107.696 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2422,7 +2401,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "38a393d6-5f78-41c5-a31b-d1465730774d")
 		(property "Reference" "#PWR09"
 			(at 118.11 120.65 0)
@@ -2434,7 +2412,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 118.11 119.38 0)
+			(at 120.396 118.618 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2622,7 +2600,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "61309244-7707-40cf-a622-bda9acc14fff")
 		(property "Reference" "J1"
 			(at 201.93 122.2755 0)
@@ -2634,7 +2611,7 @@
 			)
 		)
 		(property "Value" "Conn_01x02_MountingPin"
-			(at 201.93 124.8155 0)
+			(at 187.96 132.334 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2908,7 +2885,7 @@
 				)
 			)
 		)
-		(property "Value" "D"
+		(property "Value" "1N4002"
 			(at 179.07 85.09 0)
 			(effects
 				(font
@@ -2995,7 +2972,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "65 ohm"
+		(property "Value" "24 ohm"
 			(at 170.18 137.1599 0)
 			(effects
 				(font
@@ -3056,16 +3033,16 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "be68a00c-5a16-4a55-bda8-696eb2f13d78")
-		(property "Reference" "Op-amp1"
-			(at 163.068 83.058 0)
+		(property "Reference" "Op-amp2"
+			(at 146.304 103.632 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "MCP6001R"
-			(at 160.274 89.154 0)
+		(property "Value" "MCP6002"
+			(at 146.304 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3132,7 +3109,7 @@
 		(instances
 			(project "kiCad_LDR_flip_flop"
 				(path "/086cf29c-57f6-4286-ba50-433c4ba2e812"
-					(reference "Op-amp1")
+					(reference "Op-amp2")
 					(unit 1)
 				)
 			)
@@ -3226,7 +3203,7 @@
 				)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "1 μF"
 			(at 189.23 83.82 90)
 			(effects
 				(font
@@ -3431,7 +3408,7 @@
 			)
 		)
 		(property "Value" "IRLZ34N"
-			(at 215.9 126.9999 0)
+			(at 212.598 117.856 0)
 			(effects
 				(font
 					(size 1.27 1.27)
