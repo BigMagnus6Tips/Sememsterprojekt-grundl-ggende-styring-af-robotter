@@ -4601,7 +4601,7 @@
 				)
 			)
 		)
-		(property "Value" "2,2k ohm"
+		(property "Value" "2k ohm"
 			(at 3.81 1.92 90)
 			(layer "F.Fab")
 			(uuid "00724846-3e51-48b8-a595-1640b7b515a4")
