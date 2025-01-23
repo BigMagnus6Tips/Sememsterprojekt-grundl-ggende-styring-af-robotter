@@ -1041,26 +1041,26 @@
 		)
 	)
 	(junction
-		(at 163.83 81.28)
+		(at 166.37 88.9)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2eea7d2a-f01f-4c62-a4c6-69d6a32ea910")
 	)
 	(junction
-		(at 163.83 62.23)
+		(at 185.42 88.9)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d08d8778-9e62-4a8e-8847-ef0a014d0d63")
 	)
 	(junction
-		(at 163.83 109.22)
+		(at 138.43 88.9)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ed29e1aa-a681-4af6-abf5-402bec06521b")
 	)
 	(wire
 		(pts
-			(xy 163.83 55.88) (xy 163.83 62.23)
+			(xy 191.77 88.9) (xy 185.42 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1070,7 +1070,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 62.23) (xy 163.83 69.85)
+			(xy 185.42 88.9) (xy 177.8 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1080,7 +1080,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 77.47) (xy 163.83 81.28)
+			(xy 170.18 88.9) (xy 166.37 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1090,7 +1090,7 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 109.22) (xy 144.78 102.87)
+			(xy 138.43 69.85) (xy 144.78 69.85)
 		)
 		(stroke
 			(width 0)
@@ -1100,7 +1100,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 81.28) (xy 163.83 81.28)
+			(xy 166.37 63.5) (xy 166.37 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1110,7 +1110,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 109.22) (xy 163.83 116.84)
+			(xy 138.43 88.9) (xy 130.81 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1120,7 +1120,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 105.41) (xy 163.83 109.22)
+			(xy 142.24 88.9) (xy 138.43 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1130,7 +1130,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 62.23) (xy 138.43 67.31)
+			(xy 185.42 63.5) (xy 180.34 63.5)
 		)
 		(stroke
 			(width 0)
@@ -1140,7 +1140,7 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 100.33) (xy 156.21 100.33)
+			(xy 147.32 69.85) (xy 147.32 81.28)
 		)
 		(stroke
 			(width 0)
@@ -1150,7 +1150,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 81.28) (xy 163.83 95.25)
+			(xy 166.37 88.9) (xy 152.4 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1160,7 +1160,7 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 109.22) (xy 163.83 109.22)
+			(xy 138.43 69.85) (xy 138.43 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1170,7 +1170,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 62.23) (xy 163.83 62.23)
+			(xy 185.42 63.5) (xy 185.42 88.9)
 		)
 		(stroke
 			(width 0)
@@ -1180,7 +1180,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 74.93) (xy 138.43 81.28)
+			(xy 172.72 63.5) (xy 166.37 63.5)
 		)
 		(stroke
 			(width 0)
@@ -1190,7 +1190,7 @@
 	)
 	(text "3.3V\n"
 		(exclude_from_sim no)
-		(at 151.13 97.282 0)
+		(at 149.86 78.74 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1198,19 +1198,9 @@
 		)
 		(uuid "12de7503-0c42-4332-baa0-f1b1300ad98a")
 	)
-	(text "0,5217391A"
+	(text "1,6 Ohm\n"
 		(exclude_from_sim no)
-		(at 156.718 71.12 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "aa4729b3-5cd2-4083-96d8-35f96c990ab9")
-	)
-	(text "34,5 Ohm\n"
-		(exclude_from_sim no)
-		(at 173.736 70.866 0)
+		(at 175.26 95.25 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1220,16 +1210,15 @@
 	)
 	(symbol
 		(lib_id "Diode:1N4001")
-		(at 138.43 71.12 270)
+		(at 176.53 63.5 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "0b55a9bb-ffc1-403e-8ab2-928e1c19413d")
-		(property "Reference" "Diode1"
-			(at 140.97 69.8499 90)
+		(property "Reference" "Flighback_diode"
+			(at 182.88 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1238,7 +1227,7 @@
 			)
 		)
 		(property "Value" "1N4001"
-			(at 140.97 72.3899 90)
+			(at 180.34 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1247,7 +1236,7 @@
 			)
 		)
 		(property "Footprint" "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal"
-			(at 138.43 71.12 0)
+			(at 176.53 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1256,7 +1245,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.vishay.com/docs/88503/1n4001.pdf"
-			(at 138.43 71.12 0)
+			(at 176.53 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1265,7 +1254,7 @@
 			)
 		)
 		(property "Description" "50V 1A General Purpose Rectifier Diode, DO-41"
-			(at 138.43 71.12 0)
+			(at 176.53 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1274,7 +1263,7 @@
 			)
 		)
 		(property "Sim.Device" "D"
-			(at 138.43 71.12 0)
+			(at 176.53 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1283,7 +1272,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 138.43 71.12 0)
+			(at 176.53 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1300,7 +1289,7 @@
 		(instances
 			(project "Elektromagnet print"
 				(path "/ff828c4e-d060-48c1-8548-46dcacb1e92a"
-					(reference "Diode1")
+					(reference "Flighback_diode")
 					(unit 1)
 				)
 			)
@@ -1308,15 +1297,15 @@
 	)
 	(symbol
 		(lib_id "Transistor_FET:2N7000")
-		(at 161.29 100.33 0)
+		(at 147.32 86.36 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "29ef6fdb-f5e8-4141-9a31-528db5ab2c06")
-		(property "Reference" "Transistor1"
-			(at 155.448 98.298 90)
+		(property "Reference" "Transistor"
+			(at 143.002 92.964 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1325,16 +1314,17 @@
 			)
 		)
 		(property "Value" "2N7000"
-			(at 157.734 97.79 90)
+			(at 143.51 95.25 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_THT:TO-92S_Wide"
-			(at 166.37 102.235 0)
+			(at 145.415 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1345,7 +1335,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.vishay.com/docs/70226/70226.pdf"
-			(at 166.37 104.14 0)
+			(at 143.51 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1355,7 +1345,7 @@
 			)
 		)
 		(property "Description" "0.2A Id, 200V Vds, N-Channel MOSFET, 2.6V Logic Level, TO-92"
-			(at 161.29 100.33 0)
+			(at 147.32 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1375,7 +1365,7 @@
 		(instances
 			(project "Elektromagnet print"
 				(path "/ff828c4e-d060-48c1-8548-46dcacb1e92a"
-					(reference "Transistor1")
+					(reference "Transistor")
 					(unit 1)
 				)
 			)
@@ -1383,16 +1373,15 @@
 	)
 	(symbol
 		(lib_id "Connector:Screw_Terminal_01x02")
-		(at 163.83 50.8 90)
+		(at 196.85 88.9 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "7bc389bf-6c2f-4f33-be8b-0e9518080145")
-		(property "Reference" "Batteri 12V1"
-			(at 168.91 49.5299 90)
+		(property "Reference" "Batteri_5V1"
+			(at 212.09 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1401,7 +1390,7 @@
 			)
 		)
 		(property "Value" "Screw_Terminal_01x02"
-			(at 168.91 52.0699 90)
+			(at 212.09 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1410,7 +1399,7 @@
 			)
 		)
 		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal"
-			(at 163.83 50.8 0)
+			(at 196.85 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1419,7 +1408,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 163.83 50.8 0)
+			(at 196.85 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1428,7 +1417,7 @@
 			)
 		)
 		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 163.83 50.8 0)
+			(at 196.85 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1445,7 +1434,7 @@
 		(instances
 			(project ""
 				(path "/ff828c4e-d060-48c1-8548-46dcacb1e92a"
-					(reference "Batteri 12V1")
+					(reference "Batteri_5V1")
 					(unit 1)
 				)
 			)
@@ -1453,7 +1442,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 163.83 116.84 0)
+		(at 130.81 88.9 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1462,7 +1451,7 @@
 		(fields_autoplaced yes)
 		(uuid "7c0db0a8-64f8-4274-b5de-9f31e52c637f")
 		(property "Reference" "#PWR03"
-			(at 163.83 123.19 0)
+			(at 124.46 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1471,7 +1460,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 163.8301 120.65 90)
+			(at 127 88.9001 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1480,7 +1469,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 163.83 116.84 0)
+			(at 130.81 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1489,7 +1478,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 163.83 116.84 0)
+			(at 130.81 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1498,7 +1487,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 163.83 116.84 0)
+			(at 130.81 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1520,16 +1509,15 @@
 	)
 	(symbol
 		(lib_id "Device:L")
-		(at 163.83 73.66 0)
+		(at 173.99 88.9 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "8a92a1e1-22c7-407b-8d35-4947c65b36f0")
-		(property "Reference" "Elektromagnet1"
-			(at 165.1 72.3899 0)
+		(property "Reference" "Elektromagnet"
+			(at 167.64 92.71 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1538,16 +1526,17 @@
 			)
 		)
 		(property "Value" "L"
-			(at 165.1 74.9299 0)
+			(at 172.7201 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal"
-			(at 163.83 73.66 0)
+			(at 173.99 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1556,7 +1545,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 163.83 73.66 0)
+			(at 173.99 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1565,7 +1554,7 @@
 			)
 		)
 		(property "Description" "Inductor"
-			(at 163.83 73.66 0)
+			(at 173.99 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1582,7 +1571,7 @@
 		(instances
 			(project "Elektromagnet print"
 				(path "/ff828c4e-d060-48c1-8548-46dcacb1e92a"
-					(reference "Elektromagnet1")
+					(reference "Elektromagnet")
 					(unit 1)
 				)
 			)
@@ -1590,16 +1579,15 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 139.7 100.33 0)
+		(at 147.32 64.77 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "d5b31289-029d-430a-90fd-b4ad7e0543b0")
 		(property "Reference" "Pico 3.3V1"
-			(at 140.335 95.25 0)
+			(at 147.32 58.42 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1607,7 +1595,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01_Pin"
-			(at 140.335 97.79 0)
+			(at 147.32 60.96 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1615,7 +1603,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical"
-			(at 139.7 100.33 0)
+			(at 147.32 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1624,7 +1612,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 139.7 100.33 0)
+			(at 147.32 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1633,7 +1621,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 139.7 100.33 0)
+			(at 147.32 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1658,7 +1646,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 166.37 55.88 0)
+		(at 191.77 91.44 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1667,7 +1655,7 @@
 		(fields_autoplaced yes)
 		(uuid "e157dcab-8cf1-4a34-959e-4315b9e57b71")
 		(property "Reference" "#PWR02"
-			(at 166.37 62.23 0)
+			(at 185.42 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1676,7 +1664,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 166.37 60.96 0)
+			(at 186.69 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1684,7 +1672,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 166.37 55.88 0)
+			(at 191.77 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1693,7 +1681,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 166.37 55.88 0)
+			(at 191.77 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1702,7 +1690,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 166.37 55.88 0)
+			(at 191.77 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)

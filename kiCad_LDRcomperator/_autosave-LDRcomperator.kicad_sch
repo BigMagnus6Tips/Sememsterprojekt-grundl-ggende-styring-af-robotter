@@ -3006,7 +3006,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "234c784c-f6af-4761-9abc-3e179e0a71dc")
 		(property "Reference" "R3"
 			(at 139.7 83.8199 0)
@@ -3018,7 +3017,7 @@
 			)
 		)
 		(property "Value" "2,2k ohm"
-			(at 139.7 86.3599 0)
+			(at 151.13 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4449,7 +4448,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "ae2f9596-0c5f-4d3f-98dd-bf2be32b9af0")
 		(property "Reference" "#PWR03"
 			(at 137.16 64.77 0)
@@ -4461,7 +4459,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 137.16 55.88 0)
+			(at 137.16 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5332,7 +5330,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "LDR03"
+		(property "Value" "LDR1"
 			(at 139.7 69.8499 0)
 			(effects
 				(font
