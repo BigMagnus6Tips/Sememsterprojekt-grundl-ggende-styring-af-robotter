@@ -8,45 +8,53 @@ from ssd1306_OLED import SSD1306_I2C
 knownLinePositions = []
 
 async def start():
-    #await car.goForward(-568)
-    #pather.setAngle(90)
-    #await pather.moveToPoint([0,29])
-    #await car.inPlaceRotation(180)
-    #asyncio.create_task(switcher.updateOled())
-    #coordIndex = await switcher.waitForStart()
-    electro = PWM(Pin(12, Pin.OUT))
-    electro.freq(1000)
-    electro.duty_u16(0)
-    
-    #coordIndex = 1
-    #await car.inPlaceRotation(-180)
-    #await pather.home(leftMonitor, rightMonitor,[0,0], 90, 243)
-    #await asyncio.sleep(1)
-    #await pather.pickupAtPoint(coordsOfBolts[coordIndex],crane, electro)
-    
-    await crane.pickUpBolt(electro)
-    
-    #await pather.moveToPoint([-54,9])
-    #print("point 1")
-    #print(str(pather.getPositionInCentimeter()) + " " + str(pather.getAngle()))
-    #sleep(1)
-    #await pather.moveToPoint([0,0])
-    #print("point 2")
-    #sleep(1)
-    #await pather.moveToPoint([0,-250])
-    #print("point 3")
-    #sleep(1)
-    #await pather.moveToPoint([30,30])
-    #sleep(1)
-    #await pather.moveToPoint([0,99])
-    
-    #multiStepper.stop()
-    #while True:
-    #    print("left: " + str(leftMonitor.monitorDigital(leftAdcCutoff)) + " right: " + str(rightMonitor.monitorDigital(rightAdcCutoff)))
-    #    
-    #    await asyncio.sleep(0.1)
-    #pather.setAngle(0)
-    
+    while True:
+        pather.setPosition([0,0])
+        pather.setAngle(0)
+        
+        #await car.goForward(-568)
+        #pather.setAngle(90)
+        #await pather.moveToPoint([0,29])
+        #await car.inPlaceRotation(180)
+        #asyncio.create_task(switcher.updateOled())
+        
+        #electro = PWM(Pin(12, Pin.OUT))
+        #electro.freq(1000)
+        #electro.duty_u16(0)
+        
+        #coordIndex = await switcher.waitForStart()
+        #if coordIndex == len(coordsOfBolts)+1:
+        #    break
+        #await asyncio.sleep(1)
+        #coordIndex = 7
+        #await car.inPlaceRotation(-180)
+        #await pather.home(leftMonitor, rightMonitor,[0,0], 90, 243)
+        #await asyncio.sleep(1)
+        #await pather.pickupAtPoint(coordsOfBolts[coordIndex],crane, electro)
+        #switcher.choice += 1
+        await crane.PimpMyRide()
+        
+        #await pather.moveToPoint([-54,9])
+        #print("point 1")
+        #print(str(pather.getPositionInCentimeter()) + " " + str(pather.getAngle()))
+        #sleep(1)
+        #await pather.moveToPoint([0,0])
+        #print("point 2")
+        #sleep(1)
+        #await pather.moveToPoint([0,-250])
+        #print("point 3")
+        #sleep(1)
+        #await pather.moveToPoint([30,30])
+        #sleep(1)
+        #await pather.moveToPoint([0,99])
+        
+        #multiStepper.stop()
+        #while True:
+        #    print("left: " + str(leftMonitor.monitorDigital(leftAdcCutoff)) + " right: " + str(rightMonitor.monitorDigital(rightAdcCutoff)))
+        #    
+        #    await asyncio.sleep(0.1)
+        #pather.setAngle(0)
+        
 
 
 if __name__ == '__main__':
@@ -56,16 +64,17 @@ if __name__ == '__main__':
 
     alive = False
 
-    coordsOfBolts = [[152,111],
-                     [134,70],
+    coordsOfBolts = [[153.2,110.2],
+                     [133.5,69.4],
                      [-55,9],
-                     [-137,-69],
+                     [-135,-67],
                      [-9,76],
                      [9,106],
-                     [-9,142],
-                     [9,172],
-                     [-9,206],
-                     [9,238],]
+                     [-10,143],
+                     [11,175],
+                     [-5,209],
+                     [7,240],
+                     [148,48]]
     
     pitCoords = [0,-250]
 
@@ -94,7 +103,7 @@ if __name__ == '__main__':
     multiStepper = MultiStepper([motorLeft, motorRight])
 
     # Set their delays
-    multiStepper.set_Delays([0.003,0.003])
+    multiStepper.set_Delays([0.01,0.01])
 
 
     # Makes a differentialDriver object
@@ -121,9 +130,9 @@ if __name__ == '__main__':
     pinDown = 18
     pinStart = 19
 
-    switcher = Switcher(pinUp, pinDown, pinStart)
+    switcher = Switcher(pinUp, pinDown, pinStart,len(coordsOfBolts)+1)
 
-    #oledI2C = I2C(0, scl=Pin(17), sda=Pin(16))
+    oledI2C = I2C(0, scl=Pin(17), sda=Pin(16))
     #oled = SSD1306_I2C(128, 64, oledI2C)
 
     #switcher.addOled(oled)
