@@ -2653,6 +2653,56 @@
 		)
 		(uuid be5a340a-a7ef-4807-b8e3-985238b1eb88)
 	)
+	(text "2.7 V (hvid)"
+		(exclude_from_sim no)
+		(at 91.694 118.872 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "0f685c22-737f-4ff7-a6c3-de76fadbb216")
+	)
+	(text "0.6 V (hvid)"
+		(exclude_from_sim no)
+		(at 89.662 90.932 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "9ffaff4a-b81c-4d3d-9372-241a50faf41b")
+	)
+	(text "2.7 V (hvid)"
+		(exclude_from_sim no)
+		(at 100.076 105.664 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "a8c27a1d-af34-4ae3-9ecb-1bca971d5e57")
+	)
+	(text "1.8 V (sort)"
+		(exclude_from_sim no)
+		(at 89.154 88.646 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "af3126df-4120-45fb-b632-f32a28527009")
+	)
+	(text "1.5 V (sort)"
+		(exclude_from_sim no)
+		(at 99.822 107.95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "bef00fb1-ccac-4e5c-a2c4-8428ba992fd6")
+	)
 	(text "LED to LDR"
 		(exclude_from_sim no)
 		(at 128.27 50.292 0)
@@ -2662,6 +2712,16 @@
 			)
 		)
 		(uuid "d0f8c840-7fbd-428a-a95e-2cd9d8110103")
+	)
+	(text "1.5 V (sort)"
+		(exclude_from_sim no)
+		(at 91.44 116.078 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "e9a53a72-d6ff-4ec8-99d1-71ccd739df13")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -3346,7 +3406,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "3e549a86-175e-4c96-a2cc-e909b0d769e1")
 		(property "Reference" "#PWR013"
 			(at 63.5 125.73 0)
@@ -3358,7 +3417,11 @@
 			)
 		)
 		(property "Value" "+3V3"
+<<<<<<< HEAD
+			(at 115.57 88.9 0)
+=======
 			(at 63.5 116.84 0)
+>>>>>>> 7be830509d635807a546bf9503b50acb54b8d51d
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4247,10 +4310,13 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "9abf1343-5d13-432c-8c89-a581421180d0")
 		(property "Reference" "R7"
+<<<<<<< HEAD
+			(at 119.38 121.92 0)
+=======
 			(at 66.04 144.7799 0)
+>>>>>>> 7be830509d635807a546bf9503b50acb54b8d51d
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4259,7 +4325,11 @@
 			)
 		)
 		(property "Value" "2,2k ohm"
+<<<<<<< HEAD
+			(at 144.78 121.92 0)
+=======
 			(at 66.04 147.3199 0)
+>>>>>>> 7be830509d635807a546bf9503b50acb54b8d51d
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4519,10 +4589,13 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "b2212c0f-e3aa-482b-9719-7ec28528cb47")
 		(property "Reference" "R6"
+<<<<<<< HEAD
+			(at 123.19 86.36 0)
+=======
 			(at 66.04 128.2699 0)
+>>>>>>> 7be830509d635807a546bf9503b50acb54b8d51d
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4530,8 +4603,13 @@
 				(justify left)
 			)
 		)
+<<<<<<< HEAD
+		(property "Value" "LDR03"
+			(at 119.38 106.68 0)
+=======
 		(property "Value" "LDR2"
 			(at 66.04 130.8099 0)
+>>>>>>> 7be830509d635807a546bf9503b50acb54b8d51d
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5259,7 +5337,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "ca36a158-989d-442f-b8f4-b9f93e2ae057")
 		(property "Reference" "#PWR08"
 			(at 97.79 90.17 0)
@@ -5271,7 +5348,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 97.79 99.06 0)
+			(at 97.79 98.044 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5598,7 +5675,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "f267ebc0-8ce2-4814-894f-540f12751f18")
 		(property "Reference" "#PWR09"
 			(at 100.33 100.33 0)
@@ -5610,7 +5686,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 100.33 99.06 0)
+			(at 102.616 98.044 0)
 			(effects
 				(font
 					(size 1.27 1.27)
