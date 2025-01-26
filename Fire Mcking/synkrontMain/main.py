@@ -102,7 +102,7 @@ def main():
             
         else:
             if counter:
-                multiStepper.moveSync([2,0])
+                multiStepper.moveSync([3,2])
             multiStepper.moveSync([3,3])
             counter = not counter
             #print("turning")
