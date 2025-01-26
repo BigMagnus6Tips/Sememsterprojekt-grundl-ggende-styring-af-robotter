@@ -362,15 +362,36 @@ class JoystickController:
         xAxisNorm = round(xAxisNorm * self.scalingFactor)
         yAxisNorm = round(yAxisNorm * self.scalingFactor)
 
+        # Set the deadzone threshold, scaling the value based on a factor
         deadZone = 0.1 * self.scalingFactor
+
+        # The axes equal to a normal coordinate system where the y-axis is the vertical axis and the x-axis is the horizontal axis.
+        # Very important: The y-axis is inverted because the joystick returns a higher value when it is pushed downwards, however the x-axis is not inverted
+        # The list from the steppermotor class is also inverted, meaning the leftmost element is the right motor and the rightmost element is the left motor.
+
+        # Check if the y-axis joystick movement is above the positive deadzone
         if yAxisNorm > deadZone:
-            return [[-1, -1],[yAxisNorm, yAxisNorm],self.button.value()]
+            # The robot moves forward with both motors in the same direction
+            return [[-1, -1],[yAxisNorm, yAxisNorm], self.button.value()]
+
+        # Check if the y-axis joystick movement is below the negative deadzone
         elif yAxisNorm < -deadZone:
-            return [[1, 1],[yAxisNorm, yAxisNorm],self.button.value()]
+            # The robot moves backward with both motors in the same direction
+            return [[1, 1], [yAxisNorm, yAxisNorm], self.button.value()]
+
+        # Check if the x-axis joystick movement is below the negative deadzone
         elif xAxisNorm < -deadZone:
-            return [[1, -1],[xAxisNorm, xAxisNorm],self.button.value()]
+            # The robot rotates left with the right motor moving forward and the left backward
+            return [[1, -1], [xAxisNorm, xAxisNorm], self.button.value()]
+
+        # Check if the x-axis joystick movement is above the positive deadzone
         elif xAxisNorm > deadZone:
-            return [[-1, 1],[xAxisNorm, xAxisNorm],self.button.value()]
+            # The robot rotates right with the left motor moving forward and the right backward
+            return [[-1, 1], [xAxisNorm, xAxisNorm], self.button.value()]
+
+        # If joystick movement is within the deadzone (no significant input)
         else:
-            return [[0, 0],[0, 0],self.button.value()]
+            # Return zero values to stop the robot
+            return [[0, 0], [0, 0], self.button.value()]
+
 
